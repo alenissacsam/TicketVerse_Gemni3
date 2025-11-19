@@ -1,0 +1,130 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// TICKETVERSE DATABASE SCHEMA
+// Blockchain: Ethereum Sepolia
+// ============================================================================
+
+model User {
+  id                String   @id @default(cuid())
+  email             String   @unique
+  emailVerified     Boolean  @default(false)
+  emailVerifiedAt   DateTime?
+  // passwordHash removed for Alchemy Embedded Accounts
+  walletAddress     String   @unique // ERC-4337 smart wallet address
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  ticketsOwned      Ticket[]
+  ticketTransfersSent     TicketTransfer[] @relation("SenderTransfers")
+  ticketTransfersReceived TicketTransfer[] @relation("RecipientTransfers")
+  eventsCreated     Event[]  @relation("OrganizerEvents")
+
+  @@index([email])
+  @@index([walletAddress])
+}
+
+model Event {
+  id                String   @id @default(cuid())
+  name              String
+  description       String?
+  date              DateTime
+  venue             String
+  coverImageUrl     String?
+  contractAddress   String   @unique // Deployed smart contract address (Sepolia)
+  organizerId       String
+  maxTicketsPerWallet Int    @default(4)
+  maxResalePrice    Int?     // Percentage (e.g., 120 = 120%)
+  transferable      Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  organizer         User     @relation("OrganizerEvents", fields: [organizerId], references: [id], onDelete: Cascade)
+  ticketTypes       TicketType[]
+  tickets           Ticket[]
+
+  @@index([organizerId])
+  @@index([date])
+  @@index([contractAddress])
+}
+
+model TicketType {
+  id                String   @id @default(cuid())
+  eventId           String
+  name              String   // "General Admission", "VIP", etc.
+  price             Decimal  @db.Decimal(18, 2) // USD price
+  capacity          Int      // Max tickets for this type
+  ticketsSold       Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  event             Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  tickets           Ticket[]
+
+  @@index([eventId])
+}
+
+model Ticket {
+  id                String   @id @default(cuid())
+  tokenId           String   @unique // NFT token ID (on-chain)
+  eventId           String
+  ticketTypeId      String
+  ownerId           String
+  purchasePrice     Decimal  @db.Decimal(18, 2) // Price paid in USDC
+  redeemed          Boolean  @default(false)
+  redeemedAt        DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  event             Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  ticketType        TicketType @relation(fields: [ticketTypeId], references: [id], onDelete: Cascade)
+  owner             User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  transfers         TicketTransfer[]
+
+  @@index([tokenId])
+  @@index([ownerId])
+  @@index([eventId])
+}
+
+model TicketTransfer {
+  id                String   @id @default(cuid())
+  ticketId          String
+  fromUserId        String
+  toUserId          String
+  transactionHash   String   @unique // Blockchain transaction hash
+  createdAt         DateTime @default(now())
+
+  // Relations
+  ticket            Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  fromUser          User     @relation("SenderTransfers", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser            User     @relation("RecipientTransfers", fields: [toUserId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId])
+  @@index([transactionHash])
+}
+
+model PaymasterLog {
+  id                String   @id @default(cuid())
+  userWalletAddress String
+  operation         String   // "mint", "transfer", etc.
+  gasSponsored      String   // Wei amount
+  transactionHash   String   @unique
+  createdAt         DateTime @default(now())
+
+  @@index([userWalletAddress])
+  @@index([transactionHash])
+}

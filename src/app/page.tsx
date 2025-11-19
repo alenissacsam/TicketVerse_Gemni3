@@ -1,65 +1,92 @@
-import Image from "next/image";
+"use client";
+
+import Link from "next/link";
+import { ArrowRightIcon } from "lucide-react";
+import { motion } from "framer-motion";
+import dynamic from "next/dynamic";
+
+const UnicornEmbed = dynamic(
+  () => import("@/components/unicorn-embed").then((mod) => mod.UnicornEmbed),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-full min-h-[600px] flex items-center justify-center bg-black/5">
+        <div className="animate-pulse text-gray-400">
+          Loading visual experience...
+        </div>
+      </div>
+    ),
+  }
+);
+
+import { HeroActions } from "@/components/hero-actions";
+import { StatsCounter } from "@/components/stats-counter";
+import { EventSlider } from "@/components/event-slider";
+import { FeatureTimeline } from "@/components/feature-timeline";
+
+import { GridPattern } from "@/components/ui/grid-pattern";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <main className="flex flex-col min-h-screen bg-[#fcfcfc]">
+      {/* Hero Section - Full Screen */}
+      <div className="h-screen w-full relative overflow-hidden">
+        <UnicornEmbed projectId="LiPMvM06lfD0dgOETUwP" />
+
+        {/* Scroll Indicator */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1, duration: 1 }}
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 text-slate-400 flex flex-col items-center gap-2"
+        >
+          <span className="text-xs uppercase tracking-widest font-medium">Scroll to Explore</span>
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+            className="w-px h-12 bg-gradient-to-b from-slate-400 to-transparent"
+          />
+        </motion.div>
+      </div>
+
+      {/* Content Section - Below the fold */}
+      <div className="relative z-10 bg-[#fcfcfc] overflow-hidden">
+        <GridPattern
+          width={50}
+          height={50}
+          x={-1}
+          y={-1}
+          className="absolute inset-0 h-full w-full opacity-[0.03] text-slate-900"
+          squares={[
+            [4, 4], [5, 10], [10, 5], [15, 15], [20, 8], [25, 20], [8, 25]
+          ]}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+        {/* Intro Text */}
+        <div className="pt-32 pb-16 px-6 text-center max-w-4xl mx-auto">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-3xl md:text-5xl font-serif text-slate-800 mb-6 leading-tight"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            The Future of Ticketing is <span className="italic text-slate-500">Here</span>
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-slate-500 text-lg md:text-xl font-light leading-relaxed"
           >
-            Documentation
-          </a>
+            Join the revolution. Create events, mint NFT tickets, and connect with your community like never before.
+          </motion.p>
         </div>
-      </main>
-    </div>
+
+        <div className="pb-32">
+          <HeroActions />
+        </div>
+      </div>
+    </main>
   );
 }
