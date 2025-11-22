@@ -1,6 +1,25 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+export async function GET() {
+  try {
+    const events = await prisma.event.findMany({
+      orderBy: { date: "asc" },
+      include: {
+        ticketTypes: true,
+      },
+    });
+
+    return NextResponse.json(events);
+  } catch (error: any) {
+    console.error("Error fetching events:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error", details: error.message },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -9,11 +28,10 @@ export async function POST(request: Request) {
       description,
       date,
       venue,
-      price,
-      capacity,
+      image,
       contractAddress,
       walletAddress,
-      image,
+      ticketTypes, // Array of { name, price, capacity, metadataUri, imageUrl }
     } = body;
 
     if (!walletAddress || !contractAddress || !name || !date) {
@@ -29,19 +47,17 @@ export async function POST(request: Request) {
     });
 
     if (!user) {
-      // Auto-create user for EOA wallets that haven't "signed up" via the auth flow
-      // We use a placeholder email since we don't have one from the wallet
       console.log("User not found, auto-creating for EOA:", walletAddress);
       user = await prisma.user.create({
         data: {
           walletAddress,
-          email: `${walletAddress.toLowerCase()}@ticketverse.eth`, // Placeholder
+          email: `${walletAddress.toLowerCase()}@ticketverse.eth`,
           emailVerified: false,
         },
       });
     }
 
-    // 2. Create Event
+    // 2. Create Event with Ticket Types
     const event = await prisma.event.create({
       data: {
         name,
@@ -51,16 +67,16 @@ export async function POST(request: Request) {
         coverImageUrl: image || null,
         contractAddress,
         organizerId: user.id,
-        // Default rules
-        maxTicketsPerWallet: 4,
+        maxTicketsPerWallet: 10, // Default
         transferable: true,
         ticketTypes: {
-          create: {
-            name: "General Admission",
-            price: parseFloat(price),
-            capacity: parseInt(capacity),
-            ticketsSold: 0,
-          },
+          create: ticketTypes.map((tier: any) => ({
+            name: tier.name,
+            price: tier.price,
+            capacity: tier.capacity,
+            metadataUri: tier.metadataUri,
+            imageUrl: tier.imageUrl,
+          })),
         },
       },
       include: {

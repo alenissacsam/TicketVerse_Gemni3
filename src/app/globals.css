@@ -3,15 +3,65 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: 0 0% 100%;
+  --foreground: 0 0% 10%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 10%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 10%;
+
+  --primary: 0 0% 20%;
+  --primary-foreground: 0 0% 98%;
+
+  --secondary: 0 0% 90%;
+  --secondary-foreground: 0 0% 10%;
+
+  --muted: 0 0% 95%;
+  --muted-foreground: 0 0% 45%;
+
+  --accent: 0 0% 85%;
+  --accent-foreground: 0 0% 10%;
+
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 0 0% 90%;
+  --input: 0 0% 90%;
+  --ring: 0 0% 60%;
+
+  --radius: 0.5rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --background: 0 0% 5%;
+  --foreground: 0 0% 98%;
+
+  --card: 0 0% 8%;
+  --card-foreground: 0 0% 98%;
+
+  --popover: 0 0% 8%;
+  --popover-foreground: 0 0% 98%;
+
+  --primary: 0 0% 98%;
+  --primary-foreground: 0 0% 10%;
+
+  --secondary: 0 0% 15%;
+  --secondary-foreground: 0 0% 98%;
+
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 65%;
+
+  --accent: 0 0% 20%;
+  --accent-foreground: 0 0% 98%;
+
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 0 0% 20%;
+  --input: 0 0% 20%;
+  --ring: 0 0% 40%;
 }
 
 body {
@@ -30,6 +80,25 @@ h4,
 h5,
 h6 {
   font-family: var(--font-serif), serif;
+  letter-spacing: -0.03em;
+  /* Tighter tracking for editorial feel */
+  font-weight: 500;
+}
+
+h1 {
+  line-height: 1.1;
+}
+
+p {
+  line-height: 1.6;
+  color: #4b5563;
+  /* Slate-600 for softer body text */
+}
+
+/* Premium Selection Color */
+::selection {
+  background: #1a1a1a;
+  color: #ffffff;
 }
 
 /* Hide Unicorn Studio Badge */
@@ -42,4 +111,107 @@ a[href*="unicorn.studio"],
   visibility: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
+}
+
+/* Alchemy Account Kit Theme Overrides - Monochrome Black */
+:root {
+  --alchemy-primary: #000000 !important;
+  --alchemy-bg-primary: #000000 !important;
+  --alchemy-bg-secondary: #0a0a0a !important;
+  --alchemy-bg-tertiary: #1a1a1a !important;
+  --alchemy-fg-primary: #ffffff !important;
+  --alchemy-fg-secondary: #a3a3a3 !important;
+  --alchemy-fg-tertiary: #737373 !important;
+  --alchemy-border-primary: #262626 !important;
+  --alchemy-border-secondary: #171717 !important;
+}
+
+/* Force Alchemy modal backgrounds to black */
+[data-theme="dark"] {
+  --alchemy-bg-primary: #000000 !important;
+  --alchemy-bg-secondary: #0a0a0a !important;
+  background-color: #000000 !important;
+}
+
+/* Override any remaining navy/blue backgrounds */
+div[class*="akui"] {
+  background-color: #000000 !important;
+}
+
+div[class*="auth-card"],
+div[class*="modal"],
+div[class*="dialog"] {
+  background: #000000 !important;
+  background-color: #000000 !important;
+}
+
+/* Fix Alchemy modal buttons - multiple targeting approaches */
+/* Primary submit button */
+[class*="alchemy"] button[type="submit"],
+[class*="akui"] button[type="submit"],
+div[role="dialog"] button[type="submit"],
+button[class*="primary"],
+button[class*="submit"],
+button[class*="continue"] {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  font-weight: 600 !important;
+  border: 1px solid #ffffff !important;
+}
+
+/* Hover states */
+[class*="alchemy"] button[type="submit"]:hover,
+[class*="akui"] button[type="submit"]:hover,
+div[role="dialog"] button[type="submit"]:hover,
+button[class*="primary"]:hover,
+button[class*="submit"]:hover,
+button[class*="continue"]:hover {
+  background-color: #e5e5e5 !important;
+  color: #000000 !important;
+}
+
+/* Disabled states */
+[class*="alchemy"] button[type="submit"]:disabled,
+[class*="akui"] button[type="submit"]:disabled,
+div[role="dialog"] button[type="submit"]:disabled,
+button[class*="primary"]:disabled,
+button[class*="submit"]:disabled,
+button[class*="continue"]:disabled {
+  background-color: #404040 !important;
+  color: #a3a3a3 !important;
+  cursor: not-allowed !important;
+  opacity: 0.5 !important;
+}
+
+/* Premium Royal Glass Effect */
+.glass-premium {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    0 4px 30px rgba(0, 0, 0, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-premium:hover {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.2),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 0 20px rgba(255, 255, 255, 0.05); /* Subtle glow */
+  transform: translateY(-2px) scale(1.01);
+}
+
+/* Sidebar Specific Glass - Heavier, more solid */
+.glass-sidebar {
+  background: linear-gradient(180deg, rgba(20, 20, 20, 0.6) 0%, rgba(10, 10, 10, 0.8) 100%);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    0 20px 50px rgba(0, 0, 0, 0.5),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
 }

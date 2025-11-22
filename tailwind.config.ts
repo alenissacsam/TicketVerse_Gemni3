@@ -13,14 +13,19 @@ export default withAccountKitUi(
           background: "var(--background)",
           foreground: "var(--foreground)",
         },
+        fontFamily: {
+          handwriting: ["var(--font-handwriting)"],
+          serif: ["var(--font-serif)"],
+          display: ["var(--font-display)"],
+        },
       },
     },
     plugins: [],
   },
   {
     colors: {
-      "btn-primary": createColorSet("#363FF9", "#363FF9"),
-      "fg-accent-brand": createColorSet("#363FF9", "#363FF9"),
+      "btn-primary": createColorSet("#1a1a1a", "#e5e5e5"),
+      "fg-accent-brand": createColorSet("#1a1a1a", "#e5e5e5"),
     },
   },
 );
