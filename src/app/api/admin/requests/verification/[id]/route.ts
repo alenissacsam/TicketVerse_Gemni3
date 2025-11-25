@@ -3,10 +3,10 @@ import { prisma} from "@/lib/prisma";
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const { action, adminId } = await request.json();
 
     if (!["approve", "reject"].includes(action)) {

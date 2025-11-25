@@ -59,6 +59,8 @@ model User {
   ticketTransfersReceived TicketTransfer[] @relation("RecipientTransfers")
   eventsCreated     Event[]  @relation("OrganizerEvents")
   verificationRequests VerificationRequest[]
+  listings          Listing[]
+  auditLogs         AuditLog[]
 
   @@index([email])
   @@index([walletAddress])
@@ -142,6 +144,7 @@ model Ticket {
   ticketType        TicketType @relation(fields: [ticketTypeId], references: [id], onDelete: Cascade)
   owner             User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   transfers         TicketTransfer[]
+  listing           Listing?
 
   @@index([tokenId])
   @@index([ownerId])
@@ -153,6 +156,7 @@ model TicketTransfer {
   ticketId          String
   fromUserId        String
   toUserId          String
+  price             Decimal  @db.Decimal(18, 2) // Transaction price
   transactionHash   String   @unique // Blockchain transaction hash
   createdAt         DateTime @default(now())
 
@@ -176,3 +180,43 @@ model PaymasterLog {
   @@index([userWalletAddress])
   @@index([transactionHash])
 }
+
+enum ListingStatus {
+  ACTIVE
+  SOLD
+  CANCELLED
+}
+
+model Listing {
+  id              String   @id @default(cuid())
+  ticketId        String   @unique // One active listing per ticket
+  sellerId        String
+  price           Decimal  @db.Decimal(18, 2)
+  deadline        DateTime
+  signature       String   // JSON stringified { v, r, s } or raw bytes
+  status          ListingStatus @default(ACTIVE)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  ticket          Ticket   @relation(fields: [ticketId], references: [id])
+  seller          User     @relation(fields: [sellerId], references: [id])
+
+  @@index([status])
+  @@index([sellerId])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String   // e.g., "EVENT_CREATED", "USER_VERIFIED", "LISTING_CANCELLED"
+  entity    String   // e.g., "Event", "User", "Listing"
+  entityId  String
+  metadata  Json?    // Additional context
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
+

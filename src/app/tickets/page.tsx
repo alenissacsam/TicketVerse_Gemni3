@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Wallet, Shield, Ticket, UserCheck } from "lucide-react";
 import { USDC_ADDRESS } from "@/lib/config";
+import { SellTicketModal } from "@/components/resale/sell-ticket-modal";
+import { CancelListingButton } from "@/components/resale/cancel-listing-button";
 
 // VIP NFT Contract (Placeholder - replace with actual if known, or use config)
 const VIP_NFT_ADDRESS = "0x0000000000000000000000000000000000000000"; // TODO: Update
@@ -62,8 +64,12 @@ export default function UserDashboard() {
             if (data.user) {
                 setVerificationStatus(data.user.verificationStatus);
             }
-            if (data.tickets) {
-                setTickets(data.tickets);
+
+            // 5. Fetch Tickets
+            const ticketsRes = await fetch(`/api/tickets?ownerAddress=${address}`);
+            const ticketsData = await ticketsRes.json();
+            if (ticketsData.tickets) {
+                setTickets(ticketsData.tickets);
             }
 
         } catch (error) {
@@ -73,14 +79,14 @@ export default function UserDashboard() {
         }
     };
 
-    const handleRequestVerification = async () => {
+    const handleRequestVerification = async (type: "VIP" | "ORGANIZER") => {
         if (!user?.address) return;
         setRequesting(true);
         try {
             const res = await fetch("/api/user/request-verification", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ walletAddress: user.address }),
+                body: JSON.stringify({ walletAddress: user.address, type }),
             });
             const data = await res.json();
             if (data.success) {
@@ -143,10 +149,10 @@ export default function UserDashboard() {
                                 </div>
                                 {isVip && <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/50">Active</Badge>}
                             </div>
-                            
+
                             {!isVip && (
-                                <Button 
-                                    onClick={() => handleRequestVerification("VIP")} 
+                                <Button
+                                    onClick={() => handleRequestVerification("VIP")}
                                     disabled={requesting}
                                     variant="outline"
                                     className="w-full border-yellow-500/20 text-yellow-500 hover:bg-yellow-500/10 h-8 text-sm mb-2"
@@ -233,10 +239,31 @@ export default function UserDashboard() {
                                     <CardContent>
                                         <div className="flex justify-between text-sm text-zinc-400 mb-4">
                                             <span>Date: {new Date(ticket.event?.date).toLocaleDateString()}</span>
+                                            {ticket.listing?.status === 'ACTIVE' && (
+                                                <Badge variant="secondary" className="bg-blue-500/20 text-blue-400">Listed</Badge>
+                                            )}
                                         </div>
-                                        <Button variant="outline" className="w-full border-zinc-700 text-zinc-300 hover:bg-zinc-800">
-                                            View Ticket
-                                        </Button>
+                                        {ticket.listing?.status === 'ACTIVE' ? (
+                                            <div className="space-y-2">
+                                                <Button variant="outline" className="w-full border-zinc-700 text-zinc-300" disabled>
+                                                    Listed for {Number(ticket.listing.price)} USDC
+                                                </Button>
+                                                <CancelListingButton
+                                                    listingId={ticket.listing.id}
+                                                    ticketId={ticket.id}
+                                                    contractAddress={ticket.event.contractAddress}
+                                                    price={ticket.listing.price}
+                                                    deadline={ticket.listing.deadline}
+                                                    onSuccess={() => fetchUserData(user.address!)}
+                                                />
+                                            </div>
+                                        ) : (
+                                            <SellTicketModal 
+                                                ticketId={ticket.id} 
+                                                tokenId={ticket.tokenId} 
+                                                onSuccess={() => fetchUserData(user.address!)}
+                                            />
+                                        )}
                                     </CardContent>
                                 </Card>
                             ))}

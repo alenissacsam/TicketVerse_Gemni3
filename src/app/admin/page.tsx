@@ -54,10 +54,90 @@ export default function AdminDashboard() {
 
       {/* Main Actions Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Link href="/admin/events" className="group">
+        {/* Pending Requests Section */}
+        <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Link href="/admin/organizers/requests" className="group">
+            <Card className="bg-zinc-900/50 border-zinc-800 hover:bg-zinc-900 hover:border-blue-500/50 transition-all duration-300 h-full">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3 text-2xl text-white group-hover:text-blue-400 transition-colors">
+                  <Rocket className="h-8 w-8" />
+                  Organizer Requests
+                </CardTitle>
+                <CardDescription className="text-zinc-400 text-base">
+                  Review and approve pending organizer applications.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold">
+                  Review Requests
+                </Button>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/admin/verifications/requests" className="group">
+            <Card className="bg-zinc-900/50 border-zinc-800 hover:bg-zinc-900 hover:border-green-500/50 transition-all duration-300 h-full">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3 text-2xl text-white group-hover:text-green-400 transition-colors">
+                  <UserCheck className="h-8 w-8" />
+                  Verification Requests
+                </CardTitle>
+                <CardDescription className="text-zinc-400 text-base">
+                  Review pending VIP and user verification requests.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold">
+                  Review Requests
+                </Button>
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
+
+        {/* Management Section */}
+        <Link href="/admin/organizers" className="group">
           <Card className="bg-zinc-900/50 border-zinc-800 hover:bg-zinc-900 hover:border-purple-500/50 transition-all duration-300 h-full">
             <CardHeader>
               <CardTitle className="flex items-center gap-3 text-2xl text-white group-hover:text-purple-400 transition-colors">
+                <Settings className="h-8 w-8" />
+                Current Organizers
+              </CardTitle>
+              <CardDescription className="text-zinc-400 text-base">
+                View active organizers and manage whitelist status.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold">
+                View Organizers
+              </Button>
+            </CardContent>
+          </Card>
+        </Link>
+
+        <Link href="/admin/verifications" className="group">
+          <Card className="bg-zinc-900/50 border-zinc-800 hover:bg-zinc-900 hover:border-yellow-500/50 transition-all duration-300 h-full">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-2xl text-white group-hover:text-yellow-400 transition-colors">
+                <CheckCircle2 className="h-8 w-8" />
+                Verified Users
+              </CardTitle>
+              <CardDescription className="text-zinc-400 text-base">
+                View list of all verified users and VIPs.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button className="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-semibold">
+                View Verified List
+              </Button>
+            </CardContent>
+          </Card>
+        </Link>
+
+        <Link href="/admin/events" className="group md:col-span-2">
+          <Card className="bg-zinc-900/50 border-zinc-800 hover:bg-zinc-900 hover:border-red-500/50 transition-all duration-300 h-full">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3 text-2xl text-white group-hover:text-red-400 transition-colors">
                 <Calendar className="h-8 w-8" />
                 Manage Events
               </CardTitle>
@@ -66,65 +146,8 @@ export default function AdminDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold">
+              <Button className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold">
                 Go to Events
-              </Button>
-            </CardContent>
-          </Card>
-        </Link>
-
-        <Link href="/admin/verifications" className="group">
-          <Card className="bg-zinc-900/50 border-zinc-800 hover:bg-zinc-900 hover:border-green-500/50 transition-all duration-300 h-full">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-2xl text-white group-hover:text-green-400 transition-colors">
-                <UserCheck className="h-8 w-8" />
-                Verify Users
-              </CardTitle>
-              <CardDescription className="text-zinc-400 text-base">
-                Manage user verification status and approve new organizers.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold">
-                Go to Verification
-              </Button>
-            </CardContent>
-          </Card>
-        </Link>
-
-        <Link href="/admin/organizers" className="group">
-          <Card className="bg-zinc-900/50 border-zinc-800 hover:bg-zinc-900 hover:border-blue-500/50 transition-all duration-300 h-full">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-2xl text-white group-hover:text-blue-400 transition-colors">
-                <Settings className="h-8 w-8" />
-                Manage Organizers
-              </CardTitle>
-              <CardDescription className="text-zinc-400 text-base">
-                Whitelist addresses to allow event creation on the platform.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold">
-                Go to Organizers
-              </Button>
-            </CardContent>
-          </Card>
-        </Link>
-
-        <Link href="/admin/seed" className="group md:col-span-2">
-          <Card className="bg-zinc-900/50 border-zinc-800 hover:bg-zinc-900 hover:border-yellow-500/50 transition-all duration-300 h-full">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-2xl text-white group-hover:text-yellow-400 transition-colors">
-                <Database className="h-8 w-8" />
-                Seed Data
-              </CardTitle>
-              <CardDescription className="text-zinc-400 text-base">
-                Populate the database with sample events for testing.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-semibold">
-                Go to Seeding
               </Button>
             </CardContent>
           </Card>

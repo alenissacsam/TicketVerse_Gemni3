@@ -1,0 +1,15 @@
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String   // e.g., "EVENT_CREATED", "USER_VERIFIED", "LISTING_CANCELLED"
+  entity    String   // e.g., "Event", "User", "Listing"
+  entityId  String
+  metadata  Json?    // Additional context
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}

@@ -50,14 +50,19 @@ export function SidebarNav() {
       </button>
 
       {/* Desktop Sidebar - Premium Royal Pill */}
-      <aside className="hidden md:flex fixed left-6 top-1/2 -translate-y-1/2 z-50 flex-col items-center gap-6 p-3 glass-sidebar rounded-full transition-all duration-500 hover:shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
+      <motion.aside
+        initial={{ x: -100, y: "-50%", opacity: 0 }}
+        animate={{ x: 0, y: "-50%", opacity: 1 }}
+        transition={{ delay: 3.5, duration: 0.8, ease: "easeOut" }}
+        className="hidden md:flex fixed left-6 top-1/2 -translate-y-1/2 z-50 flex-col items-center gap-6 px-6 py-8 glass-sidebar rounded-[40px] transition-all duration-500 hover:shadow-[0_20px_60px_rgba(0,0,0,0.6)]"
+      >
         {/* User/Account Button */}
         <button
           onClick={handleAccountClick}
           className={cn(
             "p-3 rounded-full transition-all duration-300 relative overflow-hidden group",
-            user 
-              ? "text-white shadow-[0_0_20px_rgba(255,255,255,0.1)]" 
+            user
+              ? "text-white shadow-[0_0_20px_rgba(255,255,255,0.1)]"
               : "text-white/70 hover:text-white"
           )}
         >
@@ -83,7 +88,7 @@ export function SidebarNav() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "relative group flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300",
+                  "relative group flex items-center justify-center w-12 h-12 rounded-full transition-all duration-300",
                   isActive
                     ? "text-white shadow-[0_0_15px_rgba(255,255,255,0.15)]"
                     : "text-white/50 hover:text-white hover:scale-110"
@@ -93,10 +98,10 @@ export function SidebarNav() {
                 {isActive && (
                   <div className="absolute inset-0 bg-white/10 rounded-full blur-sm" />
                 )}
-                
+
                 {/* Icon */}
                 <div className="relative z-10">
-                  <item.icon size={20} strokeWidth={isActive ? 2.5 : 2} />
+                  <item.icon size={20} strokeWidth={isActive ? 2.5 : 2} className="group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-all duration-300" />
                 </div>
 
                 {/* Tooltip - Premium Glass */}
@@ -119,7 +124,7 @@ export function SidebarNav() {
             </button>
           </>
         )}
-      </aside>
+      </motion.aside>
 
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
@@ -140,7 +145,7 @@ export function SidebarNav() {
                       href={item.href}
                       onClick={() => setIsOpen(false)}
                       className={cn(
-                        "flex items-center gap-4 text-2xl font-medium transition-colors p-4 rounded-2xl",
+                        "flex items-center gap-4 text-2xl font-medium transition-colors p-4 rounded-[2rem]",
                         isActive ? "bg-slate-100 text-slate-900" : "text-slate-500"
                       )}
                     >

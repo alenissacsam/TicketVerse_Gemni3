@@ -3,11 +3,11 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { action } = await request.json(); // "APPROVE" or "REJECT"
-    const requestId = params.id;
+    const { id: requestId } = await params;
 
     if (!["APPROVE", "REJECT"].includes(action)) {
       return NextResponse.json({ error: "Invalid action" }, { status: 400 });
@@ -36,7 +36,7 @@ export async function POST(
       } else if (verificationRequest.type === "ORGANIZER") {
         await prisma.user.update({
           where: { id: verificationRequest.userId },
-          data: { 
+          data: {
             role: "ORGANIZER",
             verificationStatus: "VERIFIED" // Legacy support
           },

@@ -4,8 +4,10 @@ import "./globals.css";
 import { Providers } from "@/components/providers";
 import { SidebarNav } from "@/components/sidebar-nav";
 import { Footer } from "@/components/footer";
-import { RevealPreloader } from "@/components/reveal-preloader";
+
 import { SmoothScrollProvider } from "@/components/smooth-scroll-provider";
+import { IntroProvider } from "@/components/intro-provider";
+import { GlobalPreloader } from "@/components/global-preloader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -52,14 +54,16 @@ export default function RootLayout({
       >
         <Providers>
           <SmoothScrollProvider>
-            <SidebarNav />
-            <div className="min-h-screen flex flex-col">
-              <div className="flex-grow">
-                <RevealPreloader />
-                {children}
+            <IntroProvider>
+              <GlobalPreloader />
+              <SidebarNav />
+              <div className="min-h-screen flex flex-col">
+                <div className="flex-grow">
+                  {children}
+                </div>
+                <Footer />
               </div>
-              <Footer />
-            </div>
+            </IntroProvider>
           </SmoothScrollProvider>
         </Providers>
       </body>

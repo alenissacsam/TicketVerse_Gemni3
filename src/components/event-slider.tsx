@@ -5,7 +5,6 @@ export async function EventSlider() {
   try {
     const events = await prisma.event.findMany({
       where: { isTrending: true },
-      take: 5,
       orderBy: { date: "asc" },
       include: {
         ticketTypes: true,
@@ -31,7 +30,7 @@ export async function EventSlider() {
     });
 
     if (serializedEvents.length === 0) {
-        return null;
+      return null;
     }
 
     return <TrendingCarousel events={serializedEvents} />;

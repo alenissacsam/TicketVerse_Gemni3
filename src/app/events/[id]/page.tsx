@@ -22,7 +22,11 @@ export default async function EventPage({ params }: EventPageProps) {
     where: { id },
     include: {
       organizer: true,
-      ticketTypes: true,
+      ticketTypes: {
+        orderBy: {
+          createdAt: 'asc'
+        }
+      },
     },
   });
 

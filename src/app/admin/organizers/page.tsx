@@ -1,75 +1,75 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUser } from "@account-kit/react";
 import { EVENT_FACTORY_ADDRESS } from "@/lib/config";
 import EventFactoryABI from "@/lib/contracts/EventFactory.json";
 import { createPublicClient, createWalletClient, custom, http } from "viem";
 import { sepolia } from "viem/chains";
-import { alchemy } from "@account-kit/infra";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Loader2, Shield, ArrowLeft, Search } from "lucide-react";
+import Link from "next/link";
+
+interface User {
+    id: string;
+    email: string;
+    walletAddress: string;
+    role: string;
+    createdAt: string;
+    _count: {
+        events: number;
+    };
+}
 
 export default function OrganizersPage() {
     const user = useUser();
+    const [organizers, setOrganizers] = useState<User[]>([]);
+    const [loadingList, setLoadingList] = useState(true);
+    
+    // Manual Whitelist State
     const [address, setAddress] = useState("");
     const [status, setStatus] = useState<"whitelist" | "blacklist">("whitelist");
     const [logs, setLogs] = useState<string[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [processing, setProcessing] = useState(false);
+
+    useEffect(() => {
+        fetchOrganizers();
+    }, []);
+
+    const fetchOrganizers = async () => {
+        try {
+            const res = await fetch("/api/admin/users?role=ORGANIZER");
+            const data = await res.json();
+            if (data.users) {
+                setOrganizers(data.users);
+            }
+        } catch (error) {
+            console.error("Error fetching organizers:", error);
+        } finally {
+            setLoadingList(false);
+        }
+    };
 
     const addLog = (message: string) => {
         setLogs((prev) => [...prev, `${new Date().toLocaleTimeString()}: ${message}`]);
     };
 
-    const detectAddress = async () => {
-        try {
-            addLog("Detecting smart account address...");
-            
-            if (!user?.address) {
-                addLog("❌ No user logged in");
-                return;
-            }
-
-            setAddress(user.address);
-            addLog(`✅ Detected: ${user.address}`);
-        } catch (error: any) {
-            addLog(`❌ Detection error: ${error.message}`);
-        }
-    };
-
     const setOrganizerStatus = async () => {
-        if (!address) {
-            addLog("❌ Please enter an address");
-            return;
-        }
-
-        setLoading(true);
+        if (!address) return;
+        setProcessing(true);
         try {
-            addLog(`Setting organizer status for ${address}...`);
+            addLog(`Setting status for ${address}...`);
+            if (!(window as any).ethereum) throw new Error("No wallet found");
 
-            // Check if ethereum is available
-            if (!(window as any).ethereum) {
-                throw new Error("Please install MetaMask or another Web3 wallet");
-            }
-
-            // Request account access
-            addLog("Requesting wallet connection...");
-            const accounts = await (window as any).ethereum.request({
-                method: "eth_requestAccounts",
-            });
-
-            if (!accounts || accounts.length === 0) {
-                throw new Error("No wallet accounts found");
-            }
-
+            const accounts = await (window as any).ethereum.request({ method: "eth_requestAccounts" });
             const account = accounts[0];
-            addLog(`Using wallet: ${account}`);
-
-            // Create wallet client
+            
             const walletClient = createWalletClient({
                 chain: sepolia,
                 transport: custom((window as any).ethereum),
             });
 
-            // Call setOrganizerStatus
             const hash = await walletClient.writeContract({
                 address: EVENT_FACTORY_ADDRESS,
                 abi: EventFactoryABI.abi,
@@ -78,126 +78,122 @@ export default function OrganizersPage() {
                 account: account as `0x${string}`,
             });
 
-            addLog(`Transaction submitted: ${hash}`);
-
-            // Wait for confirmation
-            const publicClient = createPublicClient({
-                chain: sepolia,
-                transport: http(),
-            });
-
-            const receipt = await publicClient.waitForTransactionReceipt({ hash });
+            addLog(`Tx submitted: ${hash}`);
             
-            if (receipt.status === "success") {
-                addLog(`✅ Successfully ${status === "whitelist" ? "whitelisted" : "blacklisted"} ${address}`);
-            } else {
-                addLog(`❌ Transaction failed`);
-            }
+            const publicClient = createPublicClient({ chain: sepolia, transport: http() });
+            await publicClient.waitForTransactionReceipt({ hash });
+            
+            addLog(`✅ Success! ${address} is now ${status}ed`);
+            fetchOrganizers(); // Refresh list
         } catch (error: any) {
             addLog(`❌ Error: ${error.message}`);
         } finally {
-            setLoading(false);
+            setProcessing(false);
         }
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-black via-zinc-900 to-black py-12">
-            <div className="container max-w-4xl mx-auto px-6">
-                <div className="mb-8">
-                    <h1 className="text-4xl font-bungee text-white mb-2">Organizer Management</h1>
-                    <p className="text-zinc-400">Whitelist addresses to allow event creation</p>
+        <div className="min-h-screen bg-black text-white pt-24 px-6 pb-12">
+            <div className="max-w-6xl mx-auto space-y-8">
+                <div className="flex items-center gap-4">
+                    <Link href="/admin" className="p-2 rounded-full bg-zinc-800 hover:bg-zinc-700 transition-colors">
+                        <ArrowLeft className="h-5 w-5" />
+                    </Link>
+                    <div>
+                        <h1 className="text-4xl font-bold mb-2">Organizer Management</h1>
+                        <p className="text-zinc-400">View current organizers and manually whitelist addresses.</p>
+                    </div>
                 </div>
 
-                {/* Main Form */}
-                <div className="glass-premium p-8 rounded-2xl mb-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* List Section */}
+                    <div className="lg:col-span-2 space-y-6">
+                        <Card className="bg-zinc-900 border-zinc-800">
+                            <CardHeader>
+                                <CardTitle className="text-xl text-white flex items-center gap-2">
+                                    <Shield className="h-5 w-5 text-blue-500" />
+                                    Active Organizers ({organizers.length})
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                {loadingList ? (
+                                    <div className="flex justify-center py-8">
+                                        <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
+                                    </div>
+                                ) : organizers.length === 0 ? (
+                                    <p className="text-zinc-500 text-center py-8">No organizers found.</p>
+                                ) : (
+                                    <div className="space-y-4">
+                                        {organizers.map((org) => (
+                                            <div key={org.id} className="p-4 rounded-lg bg-black/40 border border-white/5 flex items-center justify-between">
+                                                <div>
+                                                    <p className="font-mono text-sm text-zinc-300">{org.walletAddress}</p>
+                                                    <p className="text-xs text-zinc-500">{org.email}</p>
+                                                </div>
+                                                <div className="text-right">
+                                                    <div className="text-xs font-bold text-blue-400 uppercase tracking-wider mb-1">
+                                                        {org._count.events} Events
+                                                    </div>
+                                                    <p className="text-xs text-zinc-600">
+                                                        Since {new Date(org.createdAt).toLocaleDateString()}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    {/* Manual Action Section */}
                     <div className="space-y-6">
-                        {/* Address Input */}
-                        <div>
-                            <label className="block text-sm font-bold text-white mb-2">
-                                Organizer Address
-                            </label>
-                            <div className="flex gap-2">
-                                <input
-                                    type="text"
-                                    value={address}
-                                    onChange={(e) => setAddress(e.target.value)}
-                                    placeholder="0x..."
-                                    className="flex-1 px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-white/30"
-                                />
-                                <button
-                                    onClick={detectAddress}
-                                    className="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg text-white font-bold transition-all"
-                                >
-                                    🔍 Detect
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Status Selection */}
-                        <div>
-                            <label className="block text-sm font-bold text-white mb-2">
-                                Action
-                            </label>
-                            <div className="flex gap-4">
-                                <button
-                                    onClick={() => setStatus("whitelist")}
-                                    className={`flex-1 px-6 py-3 rounded-lg font-bold transition-all ${
-                                        status === "whitelist"
-                                            ? "bg-green-500/20 border-2 border-green-500 text-green-400"
-                                            : "bg-black/50 border border-white/10 text-zinc-400 hover:border-white/30"
-                                    }`}
-                                >
-                                    ✅ Whitelist
-                                </button>
-                                <button
-                                    onClick={() => setStatus("blacklist")}
-                                    className={`flex-1 px-6 py-3 rounded-lg font-bold transition-all ${
-                                        status === "blacklist"
-                                            ? "bg-red-500/20 border-2 border-red-500 text-red-400"
-                                            : "bg-black/50 border border-white/10 text-zinc-400 hover:border-white/30"
-                                    }`}
-                                >
-                                    ❌ Blacklist
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Submit Button */}
-                        <button
-                            onClick={setOrganizerStatus}
-                            disabled={loading || !address}
-                            className="w-full px-8 py-4 bg-gradient-to-r from-white to-zinc-300 text-black font-bungee text-lg rounded-lg hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            {loading ? "Processing..." : "Update Status"}
-                        </button>
-                    </div>
-                </div>
-
-                {/* Status Log */}
-                <div className="glass-premium p-6 rounded-2xl">
-                    <h3 className="text-lg font-bold text-white mb-4">Activity Log</h3>
-                    <div className="space-y-2 max-h-64 overflow-y-auto">
-                        {logs.length === 0 ? (
-                            <p className="text-zinc-500 text-sm">No activity yet...</p>
-                        ) : (
-                            logs.map((log, i) => (
-                                <div key={i} className="text-sm text-zinc-300 font-mono">
-                                    {log}
+                        <Card className="bg-zinc-900 border-zinc-800">
+                            <CardHeader>
+                                <CardTitle className="text-lg text-white">Manual Override</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div>
+                                    <label className="text-xs font-bold text-zinc-400 uppercase mb-2 block">Address</label>
+                                    <input
+                                        type="text"
+                                        value={address}
+                                        onChange={(e) => setAddress(e.target.value)}
+                                        placeholder="0x..."
+                                        className="w-full px-3 py-2 bg-black border border-zinc-700 rounded text-sm text-white focus:border-blue-500 outline-none"
+                                    />
                                 </div>
-                            ))
-                        )}
-                    </div>
-                </div>
+                                <div className="flex gap-2">
+                                    <Button 
+                                        onClick={() => setStatus("whitelist")}
+                                        variant={status === "whitelist" ? "default" : "outline"}
+                                        className={`flex-1 ${status === "whitelist" ? "bg-blue-600 hover:bg-blue-700" : "border-zinc-700 text-zinc-400"}`}
+                                    >
+                                        Whitelist
+                                    </Button>
+                                    <Button 
+                                        onClick={() => setStatus("blacklist")}
+                                        variant={status === "blacklist" ? "destructive" : "outline"}
+                                        className={`flex-1 ${status === "blacklist" ? "" : "border-zinc-700 text-zinc-400"}`}
+                                    >
+                                        Blacklist
+                                    </Button>
+                                </div>
+                                <Button 
+                                    onClick={setOrganizerStatus}
+                                    disabled={processing || !address}
+                                    className="w-full bg-white text-black hover:bg-zinc-200 font-bold"
+                                >
+                                    {processing ? <Loader2 className="h-4 w-4 animate-spin" /> : "Execute"}
+                                </Button>
 
-                {/* Info Card */}
-                <div className="mt-6 glass-premium p-6 rounded-2xl border border-blue-500/20">
-                    <h3 className="text-lg font-bold text-blue-400 mb-2">ℹ️ Important</h3>
-                    <ul className="text-sm text-zinc-400 space-y-2">
-                        <li>• Only whitelisted addresses can create events via EventFactory</li>
-                        <li>• Use "Detect" to auto-fill your current smart account address</li>
-                        <li>• You must be the factory owner to call this function</li>
-                        <li>• Make sure MetaMask or your wallet is connected</li>
-                    </ul>
+                                {/* Mini Logs */}
+                                <div className="mt-4 p-3 bg-black rounded border border-zinc-800 h-32 overflow-y-auto text-xs font-mono text-zinc-500">
+                                    {logs.length === 0 ? "Ready..." : logs.map((l, i) => <div key={i}>{l}</div>)}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
                 </div>
             </div>
         </div>

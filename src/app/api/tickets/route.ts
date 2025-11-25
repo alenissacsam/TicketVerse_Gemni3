@@ -30,7 +30,16 @@ export async function POST(request: Request) {
       });
     }
 
-    // Create the ticket in the database
+    // Get organizer ID for the event
+    const event = await prisma.event.findUnique({
+      where: { id: eventId },
+      select: { organizerId: true }
+    });
+
+    if (!event) {
+      return NextResponse.json({ error: "Event not found" }, { status: 404 });
+    }
+
     const ticket = await prisma.ticket.create({
       data: {
         tokenId: tokenId.toString(),
@@ -38,17 +47,9 @@ export async function POST(request: Request) {
         ticketTypeId,
         ownerId: user.id,
         purchasePrice: price || 0,
-        // We don't have a direct relation to transaction hash in Ticket model based on schema, 
-        // but we can create a TicketTransfer record for the minting if needed, 
-        // or just assume the Ticket creation is enough.
-        // The schema has TicketTransfer with transactionHash. Let's create that too for history.
         transfers: {
           create: {
-            fromUserId: user.id, // Minting usually comes from 0x0 but we can just say from self or a system account. 
-            // Actually, for minting, "from" is usually the contract or null. 
-            // Our schema requires a User for fromUserId. 
-            // Let's use the owner as both for now or maybe we need a "System" user.
-            // For simplicity in this MVP, we'll just attribute it to the user.
+            fromUserId: event.organizerId,
             toUserId: user.id,
             transactionHash,
           }
@@ -56,7 +57,6 @@ export async function POST(request: Request) {
       },
     });
 
-    // Increment tickets sold
     await prisma.ticketType.update({
       where: { id: ticketTypeId },
       data: {
@@ -101,6 +101,7 @@ export async function GET(request: Request) {
       include: {
         event: true,
         ticketType: true,
+        listing: true
       },
       orderBy: {
         createdAt: 'desc'

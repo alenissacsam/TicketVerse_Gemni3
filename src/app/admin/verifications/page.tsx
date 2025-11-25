@@ -2,139 +2,104 @@
 
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Check, X, Shield, UserCheck } from "lucide-react";
+import { Loader2, UserCheck, ArrowLeft, ShieldCheck } from "lucide-react";
+import Link from "next/link";
 
-interface Request {
+interface User {
     id: string;
-    user: {
-        id: string;
-        email: string;
-        walletAddress: string;
-    };
-    type: "ORGANIZER" | "VIP";
-    status: "PENDING" | "APPROVED" | "REJECTED";
+    email: string;
+    walletAddress: string;
+    role: string;
+    isVip: boolean;
     createdAt: string;
 }
 
-export default function AdminVerifications() {
-    const [requests, setRequests] = useState<Request[]>([]);
+export default function VerifiedUsersPage() {
+    const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
-    const [processingId, setProcessingId] = useState<string | null>(null);
 
     useEffect(() => {
-        fetchRequests();
+        fetchVerifiedUsers();
     }, []);
 
-    const fetchRequests = async () => {
+    const fetchVerifiedUsers = async () => {
         try {
-            const res = await fetch("/api/admin/requests");
+            const res = await fetch("/api/admin/users?isVerified=true");
             const data = await res.json();
-            if (data.requests) {
-                setRequests(data.requests);
+            if (data.users) {
+                setUsers(data.users);
             }
         } catch (error) {
-            console.error("Error fetching requests:", error);
+            console.error("Error fetching verified users:", error);
         } finally {
             setLoading(false);
-        }
-    };
-
-    const handleResolve = async (id: string, action: "APPROVE" | "REJECT") => {
-        setProcessingId(id);
-        try {
-            const res = await fetch(`/api/admin/requests/${id}/resolve`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action }),
-            });
-            const data = await res.json();
-            if (data.success) {
-                // Remove from list
-                setRequests(prev => prev.filter(r => r.id !== id));
-            } else {
-                alert(data.error || "Action failed");
-            }
-        } catch (error) {
-            console.error("Error resolving request:", error);
-        } finally {
-            setProcessingId(null);
         }
     };
 
     return (
         <div className="min-h-screen bg-black text-white pt-24 px-6 pb-12">
             <div className="max-w-6xl mx-auto space-y-8">
-                <div>
-                    <h1 className="text-4xl font-bold mb-2">Verification Requests</h1>
-                    <p className="text-zinc-400">Manage VIP and Organizer access requests.</p>
+                <div className="flex items-center gap-4">
+                    <Link href="/admin" className="p-2 rounded-full bg-zinc-800 hover:bg-zinc-700 transition-colors">
+                        <ArrowLeft className="h-5 w-5" />
+                    </Link>
+                    <div>
+                        <h1 className="text-4xl font-bold mb-2">Verified Users</h1>
+                        <p className="text-zinc-400">List of all users with verified status.</p>
+                    </div>
                 </div>
 
-                {loading ? (
-                    <div className="flex justify-center py-12">
-                        <Loader2 className="h-8 w-8 animate-spin text-purple-500" />
-                    </div>
-                ) : requests.length === 0 ? (
-                    <div className="text-center py-12 bg-zinc-900/50 rounded-xl border border-zinc-800">
-                        <p className="text-zinc-500">No pending requests.</p>
-                    </div>
-                ) : (
-                    <div className="grid gap-4">
-                        {requests.map((req) => (
-                            <Card key={req.id} className="bg-zinc-900 border-zinc-800">
-                                <CardContent className="p-6 flex items-center justify-between">
-                                    <div className="flex items-center gap-4">
-                                        <div className={`p-3 rounded-full ${
-                                            req.type === "VIP" ? "bg-yellow-500/10 text-yellow-500" : "bg-blue-500/10 text-blue-500"
-                                        }`}>
-                                            {req.type === "VIP" ? <Shield className="h-6 w-6" /> : <UserCheck className="h-6 w-6" />}
-                                        </div>
-                                        <div>
-                                            <div className="flex items-center gap-2">
-                                                <h3 className="font-bold text-lg">{req.type} Request</h3>
-                                                <Badge variant="outline" className="border-zinc-700 text-zinc-400">
-                                                    {new Date(req.createdAt).toLocaleDateString()}
-                                                </Badge>
+                <Card className="bg-zinc-900 border-zinc-800">
+                    <CardHeader>
+                        <CardTitle className="text-xl text-white flex items-center gap-2">
+                            <ShieldCheck className="h-5 w-5 text-green-500" />
+                            Total Verified: {users.length}
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        {loading ? (
+                            <div className="flex justify-center py-12">
+                                <Loader2 className="h-8 w-8 animate-spin text-green-500" />
+                            </div>
+                        ) : users.length === 0 ? (
+                            <div className="text-center py-12">
+                                <p className="text-zinc-500">No verified users found.</p>
+                            </div>
+                        ) : (
+                            <div className="grid gap-4">
+                                {users.map((user) => (
+                                    <div key={user.id} className="p-4 rounded-lg bg-black/40 border border-white/5 flex items-center justify-between">
+                                        <div className="flex items-center gap-4">
+                                            <div className="p-2 rounded-full bg-green-500/10 text-green-500">
+                                                <UserCheck className="h-5 w-5" />
                                             </div>
-                                            <p className="text-zinc-400 font-mono text-sm mt-1">
-                                                {req.user.walletAddress}
-                                            </p>
-                                            <p className="text-zinc-500 text-xs">
-                                                {req.user.email}
+                                            <div>
+                                                <div className="flex items-center gap-2">
+                                                    <p className="font-mono text-sm text-zinc-300">{user.walletAddress}</p>
+                                                    {user.isVip && (
+                                                        <Badge variant="secondary" className="bg-yellow-500/10 text-yellow-500 border-yellow-500/20 text-[10px]">
+                                                            VIP
+                                                        </Badge>
+                                                    )}
+                                                </div>
+                                                <p className="text-xs text-zinc-500">{user.email}</p>
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <Badge variant="outline" className="border-green-500/30 text-green-400 bg-green-500/5">
+                                                Verified
+                                            </Badge>
+                                            <p className="text-[10px] text-zinc-600 mt-1">
+                                                Since {new Date(user.createdAt).toLocaleDateString()}
                                             </p>
                                         </div>
                                     </div>
-
-                                    <div className="flex items-center gap-3">
-                                        <Button 
-                                            onClick={() => handleResolve(req.id, "REJECT")}
-                                            disabled={processingId === req.id}
-                                            variant="ghost" 
-                                            className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                                        >
-                                            Reject
-                                        </Button>
-                                        <Button 
-                                            onClick={() => handleResolve(req.id, "APPROVE")}
-                                            disabled={processingId === req.id}
-                                            className="bg-green-600 hover:bg-green-700 text-white"
-                                        >
-                                            {processingId === req.id ? (
-                                                <Loader2 className="h-4 w-4 animate-spin" />
-                                            ) : (
-                                                <>
-                                                    <Check className="h-4 w-4 mr-2" />
-                                                    Approve
-                                                </>
-                                            )}
-                                        </Button>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
-                )}
+                                ))}
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
             </div>
         </div>
     );
