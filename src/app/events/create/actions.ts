@@ -7,7 +7,7 @@ export interface CreateEventInput {
   description: string;
   date: string;
   venue: string;
-  imageUrl?: string;
+  coverImageUrl?: string;
   price: string;
   contractAddress: string;
   creatorAddress: string;
@@ -32,6 +32,20 @@ export async function createEvent(input: CreateEventInput) {
       throw new Error("Price must be positive");
     }
 
+    // Find or create organizer user
+    let organizer = await prisma.user.findUnique({
+      where: { walletAddress: input.creatorAddress.toLowerCase() },
+    });
+
+    if (!organizer) {
+      organizer = await prisma.user.create({
+        data: {
+          walletAddress: input.creatorAddress.toLowerCase(),
+          email: `wallet-${input.creatorAddress.slice(0, 6)}@placeholder.com`,
+        },
+      });
+    }
+
     // Create event in database
     const event = await prisma.event.create({
       data: {
@@ -39,10 +53,9 @@ export async function createEvent(input: CreateEventInput) {
         description: input.description,
         date: eventDate,
         venue: input.venue,
-        imageUrl: input.imageUrl || null,
+        coverImageUrl: input.coverImageUrl || null,
         contractAddress: input.contractAddress,
-        creatorAddress: input.creatorAddress,
-        status: "ACTIVE",
+        organizerId: organizer.id,
       },
     });
 
@@ -51,10 +64,8 @@ export async function createEvent(input: CreateEventInput) {
       data: {
         eventId: event.id,
         name: "General Admission",
-        price: priceInWei.toString(),
-        supply: 1000, // Default supply
-        minted: 0,
-        tokenId: 1, // First token ID
+        price: parseFloat(input.price),
+        capacity: 1000, // Default capacity
       },
     });
 

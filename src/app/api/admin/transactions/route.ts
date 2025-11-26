@@ -111,8 +111,8 @@ export async function GET(request: NextRequest) {
                         ticketType: true,
                     },
                 },
-                from: true,
-                to: true,
+                fromUser: true,
+                toUser: true,
             },
         });
 

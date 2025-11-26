@@ -47,7 +47,6 @@ export async function POST(request: Request) {
     });
 
     if (!user) {
-      console.log("User not found, auto-creating for EOA:", walletAddress);
       user = await prisma.user.create({
         data: {
           walletAddress,

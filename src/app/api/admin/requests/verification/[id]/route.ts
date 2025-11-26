@@ -33,8 +33,6 @@ export async function POST(
       where: { id },
       data: {
         status: action === "approve" ? "APPROVED" : "REJECTED",
-        reviewedBy: adminId,
-        reviewedAt: new Date(),
       },
     });
 
@@ -42,7 +40,7 @@ export async function POST(
     if (action === "approve") {
       await prisma.user.update({
         where: { id: verificationRequest.userId },
-        data: { isVerified: true },
+        data: { verificationStatus: "VERIFIED" },
       });
     }
 

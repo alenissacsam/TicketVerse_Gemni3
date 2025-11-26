@@ -24,13 +24,13 @@ export async function GET(request: Request) {
         email: true,
         walletAddress: true,
         role: true,
-        isVerified: true,
+        verificationStatus: true,
         isVip: true,
         createdAt: true,
         _count: {
           select: {
-            events: true,
-            tickets: true,
+            eventsCreated: true,
+            ticketsOwned: true,
           }
         }
       },

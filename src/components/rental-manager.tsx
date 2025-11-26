@@ -82,18 +82,16 @@ export function RentalManager({ tokenId, contractAddress }: RentalManagerProps) 
             const data = encodeFunctionData({
                 abi: EventTicketABI,
                 functionName: "setUser",
-                args: [BigInt(tokenId), newRenter as `0x${string}`, expiryTimestamp],
+                args: [BigInt(tokenId), newRenter as `0x${string}`, BigInt(expiryTimestamp)],
             });
 
-            const txHash = await client.sendTransaction({
+            const hash = await client.sendTransaction({
                 to: contractAddress as `0x${string}`,
-                data: data,
+                data,
                 chain: null,
             });
 
-            console.log("SetUser transaction sent:", txHash);
-
-            await client.waitForTransactionReceipt({ hash: txHash });
+            await client.waitForTransactionReceipt({ hash });
 
             setStatus("success");
             setShowForm(false);

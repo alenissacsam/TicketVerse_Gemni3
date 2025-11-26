@@ -46,7 +46,7 @@ export async function GET(request: Request) {
             ticketTypes: event.ticketTypes.map((tt) => ({
                 name: tt.name,
                 price: tt.price.toString(),
-                maxSupply: tt.supply,
+                maxSupply: tt.capacity,
                 currency: "USDC",
             })),
             attributes: [

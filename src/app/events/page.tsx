@@ -23,9 +23,9 @@ export default async function EventsPage() {
     <div className="min-h-screen bg-black text-white pt-24 pb-12">
       {/* Background Elements */}
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.05),transparent_40%)] pointer-events-none" />
-      
+
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
+
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div>
@@ -60,7 +60,7 @@ export default async function EventsPage() {
                 <p className="text-zinc-300 line-clamp-3 text-lg">
                   {featuredEvent.description}
                 </p>
-                <Link 
+                <Link
                   href={`/events/${featuredEvent.id}`}
                   className="inline-block px-8 py-4 bg-white text-black font-bold rounded-xl hover:scale-105 transition-transform"
                 >
@@ -68,19 +68,19 @@ export default async function EventsPage() {
                 </Link>
               </div>
               <div className="hidden lg:block h-full min-h-[400px] relative rounded-2xl overflow-hidden">
-                 {featuredEvent.coverImageUrl && (
-                   <img 
-                     src={featuredEvent.coverImageUrl} 
-                     alt={featuredEvent.name}
-                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                   />
-                 )}
+                {featuredEvent.coverImageUrl && (
+                  <img
+                    src={featuredEvent.coverImageUrl}
+                    alt={featuredEvent.name}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                )}
               </div>
             </div>
             {/* Background Image for Mobile/Blur */}
             {featuredEvent.coverImageUrl && (
-              <img 
-                src={featuredEvent.coverImageUrl} 
+              <img
+                src={featuredEvent.coverImageUrl}
                 alt=""
                 className="absolute inset-0 w-full h-full object-cover opacity-30 blur-sm lg:hidden"
               />
@@ -90,9 +90,14 @@ export default async function EventsPage() {
 
         {/* Event Grid */}
         {events.length === 0 ? (
-          <div className="text-center py-32 bg-zinc-900/30 rounded-3xl border border-white/5 border-dashed">
-            <h3 className="text-xl font-bungee text-white mb-2">No events found</h3>
-            <p className="text-zinc-500">Be the first to create an event on TicketVerse.</p>
+          <div className="text-center py-32 glass-premium rounded-3xl">
+            <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Sparkles className="w-10 h-10 text-zinc-500" />
+            </div>
+            <h3 className="text-2xl font-bungee text-white mb-3">No events found</h3>
+            <p className="text-zinc-400 max-w-md mx-auto">
+              The metaverse is quiet... for now. Be the first to create an event on TicketVerse.
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

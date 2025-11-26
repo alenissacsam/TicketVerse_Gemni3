@@ -32,22 +32,20 @@ export default function AdminVerifyPage() {
       const data = encodeFunctionData({
         abi: UserVerificationABI,
         functionName: "verifyUser",
-        args: [
-          formData.userAddress as `0x${string}`,
-          BigInt(formData.level)
-        ]
+        args: [formData.userAddress as `0x${string}`, BigInt(formData.level)]
       });
 
-      const txHash = await client.sendTransaction({
+      const hash = await client.sendTransaction({
         to: USER_VERIFICATION_ADDRESS,
-        data: data,
-        chain: null,
+        data,
+        chain: null
       });
 
-      alert(`Verification transaction sent! Hash: ${txHash}`);
-
+      await client.waitForTransactionReceipt({ hash });
+      
+      alert("User verified successfully");
+      setFormData({ userAddress: "", level: "1" });
     } catch (error: any) {
-      console.error("Verification error:", error);
       alert(`Failed to verify user: ${error.message || "Unknown error"}`);
     } finally {
       setIsLoading(false);

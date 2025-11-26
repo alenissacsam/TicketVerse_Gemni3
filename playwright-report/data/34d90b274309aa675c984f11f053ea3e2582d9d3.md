@@ -1,0 +1,330 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: Experience
+      - generic [ref=e6]: the
+      - generic [ref=e7]: next
+    - generic [ref=e8]:
+      - generic [ref=e9]: generation
+      - generic [ref=e10]: of
+      - generic [ref=e11]: ticketing.
+  - complementary [ref=e12]:
+    - button [ref=e13] [cursor=pointer]:
+      - img [ref=e16]
+    - navigation [ref=e20]:
+      - link "Discover" [ref=e21] [cursor=pointer]:
+        - /url: /
+        - img [ref=e24]
+        - generic: Discover
+      - link "Events" [ref=e27] [cursor=pointer]:
+        - /url: /events
+        - img [ref=e29]
+        - generic: Events
+      - link "Create" [ref=e31] [cursor=pointer]:
+        - /url: /events/create
+        - img [ref=e33]
+        - generic: Create
+      - link "My Tickets" [ref=e34] [cursor=pointer]:
+        - /url: /tickets
+        - img [ref=e36]
+        - generic: My Tickets
+      - link "Admin" [ref=e39] [cursor=pointer]:
+        - /url: /admin
+        - img [ref=e41]
+        - generic: Admin
+  - generic [ref=e43]:
+    - main [ref=e45]:
+      - generic [ref=e51]:
+        - generic [ref=e52]:
+          - generic [ref=e53]: Experience
+          - generic [ref=e54]: the
+          - generic [ref=e55]: next
+        - generic [ref=e56]:
+          - generic [ref=e57]: generation
+          - generic [ref=e58]: of
+          - generic [ref=e59]: ticketing.
+      - generic [ref=e64]:
+        - generic [ref=e66]:
+          - generic [ref=e67]: Secure • Transparent • Immutable •
+          - generic [ref=e68]: Secure • Transparent • Immutable •
+          - generic [ref=e69]: Secure • Transparent • Immutable •
+          - generic [ref=e70]: Secure • Transparent • Immutable •
+        - generic [ref=e72]:
+          - generic [ref=e73]: Live • Exclusive • Verified •
+          - generic [ref=e74]: Live • Exclusive • Verified •
+          - generic [ref=e75]: Live • Exclusive • Verified •
+          - generic [ref=e76]: Live • Exclusive • Verified •
+      - generic [ref=e78]:
+        - generic [ref=e81]:
+          - generic [ref=e82]:
+            - generic [ref=e83]: Trending Now
+            - heading "H o t T i c k e t s" [level=2] [ref=e87]:
+              - generic [ref=e88]:
+                - generic [ref=e89]: H
+                - generic [ref=e90]: o
+                - generic [ref=e91]: t
+              - generic [ref=e92]:
+                - generic [ref=e93]: T
+                - generic [ref=e94]: i
+                - generic [ref=e95]: c
+                - generic [ref=e96]: k
+                - generic [ref=e97]: e
+                - generic [ref=e98]: t
+                - generic [ref=e99]: s
+          - paragraph [ref=e101]: Scroll or drag to explore the most anticipated events.
+        - generic [ref=e104]:
+          - generic [ref=e109]:
+            - img "Abstract Art Gala" [ref=e111]
+            - generic [ref=e113]:
+              - generic [ref=e115]: Selling Fast
+              - generic [ref=e117]:
+                - generic [ref=e118]:
+                  - generic [ref=e119]:
+                    - generic [ref=e120]: $
+                    - text: 0.02 USDC
+                  - generic [ref=e121]:
+                    - img [ref=e122]
+                    - text: Dec 7
+                - heading "Abstract Art Gala" [level=3] [ref=e124]
+                - generic [ref=e125]:
+                  - img [ref=e126]
+                  - generic [ref=e129]: Metropolitan Gallery
+                - link "Get Tickets" [ref=e130] [cursor=pointer]:
+                  - /url: /events/cmiabg1s7000a0kukd33rerdb
+                  - text: Get Tickets
+                  - img [ref=e131]
+          - generic [ref=e137]:
+            - img "Jazz Under the Stars" [ref=e139]
+            - generic [ref=e141]:
+              - generic [ref=e143]: Selling Fast
+              - generic [ref=e145]:
+                - generic [ref=e146]:
+                  - generic [ref=e147]:
+                    - generic [ref=e148]: $
+                    - text: 0.03 USDC
+                  - generic [ref=e149]:
+                    - img [ref=e150]
+                    - text: Dec 12
+                - heading "Jazz Under the Stars" [level=3] [ref=e152]
+                - generic [ref=e153]:
+                  - img [ref=e154]
+                  - generic [ref=e157]: Riverside Amphitheater
+                - link "Get Tickets" [ref=e158] [cursor=pointer]:
+                  - /url: /events/cmiabhgq7000i0kuk4f5b13sb
+                  - text: Get Tickets
+                  - img [ref=e159]
+          - generic [ref=e165]:
+            - img "Startup Pitch Night" [ref=e167]
+            - generic [ref=e169]:
+              - generic [ref=e171]: Selling Fast
+              - generic [ref=e173]:
+                - generic [ref=e174]:
+                  - generic [ref=e175]:
+                    - generic [ref=e176]: $
+                    - text: 0.02 USDC
+                  - generic [ref=e177]:
+                    - img [ref=e178]
+                    - text: Dec 17
+                - heading "Startup Pitch Night" [level=3] [ref=e180]
+                - generic [ref=e181]:
+                  - img [ref=e182]
+                  - generic [ref=e185]: Innovation Hub
+                - link "Get Tickets" [ref=e186] [cursor=pointer]:
+                  - /url: /events/cmiabjhrn000u0kuke4kgtbb1
+                  - text: Get Tickets
+                  - img [ref=e187]
+          - generic [ref=e193]:
+            - img "Neon Nights Festival" [ref=e195]
+            - generic [ref=e197]:
+              - generic [ref=e199]: Selling Fast
+              - generic [ref=e201]:
+                - generic [ref=e202]:
+                  - generic [ref=e203]:
+                    - generic [ref=e204]: $
+                    - text: 0.05 USDC
+                  - generic [ref=e205]:
+                    - img [ref=e206]
+                    - text: Dec 22
+                - heading "Neon Nights Festival" [level=3] [ref=e208]
+                - generic [ref=e209]:
+                  - img [ref=e210]
+                  - generic [ref=e213]: Cyber City Arena
+                - link "Get Tickets" [ref=e214] [cursor=pointer]:
+                  - /url: /events/cmiabf1pt00020kuknpa4oejq
+                  - text: Get Tickets
+                  - img [ref=e215]
+          - generic [ref=e221]:
+            - img "Digital Art Expo" [ref=e223]
+            - generic [ref=e225]:
+              - generic [ref=e227]: Selling Fast
+              - generic [ref=e229]:
+                - generic [ref=e230]:
+                  - generic [ref=e231]:
+                    - generic [ref=e232]: $
+                    - text: 0.04 USDC
+                  - generic [ref=e233]:
+                    - img [ref=e234]
+                    - text: Dec 27
+                - heading "Digital Art Expo" [level=3] [ref=e236]
+                - generic [ref=e237]:
+                  - img [ref=e238]
+                  - generic [ref=e241]: Modern Art Museum
+                - link "Get Tickets" [ref=e242] [cursor=pointer]:
+                  - /url: /events/cmiabi4yd000m0kukcgsc03vr
+                  - text: Get Tickets
+                  - img [ref=e243]
+          - generic [ref=e249]:
+            - img "Crypto Conference 2025" [ref=e251]
+            - generic [ref=e253]:
+              - generic [ref=e255]: Selling Fast
+              - generic [ref=e257]:
+                - generic [ref=e258]:
+                  - generic [ref=e259]:
+                    - generic [ref=e260]: $
+                    - text: 0.08 USDC
+                  - generic [ref=e261]:
+                    - img [ref=e262]
+                    - text: Jan 6
+                - heading "Crypto Conference 2025" [level=3] [ref=e264]
+                - generic [ref=e265]:
+                  - img [ref=e266]
+                  - generic [ref=e269]: Blockchain Tower, Dubai
+                - link "Get Tickets" [ref=e270] [cursor=pointer]:
+                  - /url: /events/cmiabgryz000e0kuk6il5a0xg
+                  - text: Get Tickets
+                  - img [ref=e271]
+          - generic [ref=e277]:
+            - img "Food & Wine Festival" [ref=e279]
+            - generic [ref=e281]:
+              - generic [ref=e283]: Selling Fast
+              - generic [ref=e285]:
+                - generic [ref=e286]:
+                  - generic [ref=e287]:
+                    - generic [ref=e288]: $
+                    - text: 0.06 USDC
+                  - generic [ref=e289]:
+                    - img [ref=e290]
+                    - text: Jan 11
+                - heading "Food & Wine Festival" [level=3] [ref=e292]
+                - generic [ref=e293]:
+                  - img [ref=e294]
+                  - generic [ref=e297]: Coastal Gardens
+                - link "Get Tickets" [ref=e298] [cursor=pointer]:
+                  - /url: /events/cmiabiun7000q0kukcbs5ppfg
+                  - text: Get Tickets
+                  - img [ref=e299]
+          - generic [ref=e305]:
+            - img "Future Tech Summit" [ref=e307]
+            - generic [ref=e309]:
+              - generic [ref=e311]: Selling Fast
+              - generic [ref=e313]:
+                - generic [ref=e314]:
+                  - generic [ref=e315]:
+                    - generic [ref=e316]: $
+                    - text: 0.1 USDC
+                  - generic [ref=e317]:
+                    - img [ref=e318]
+                    - text: Jan 21
+                - heading "Future Tech Summit" [level=3] [ref=e320]
+                - generic [ref=e321]:
+                  - img [ref=e322]
+                  - generic [ref=e325]: Silicon Valley Convention Center
+                - link "Get Tickets" [ref=e326] [cursor=pointer]:
+                  - /url: /events/cmiabfjow00060kukz44jt7fo
+                  - text: Get Tickets
+                  - img [ref=e327]
+      - generic [ref=e334]:
+        - generic [ref=e335]:
+          - heading "Protocol Transparency" [level=3] [ref=e336]
+          - paragraph [ref=e337]:
+            - text: Every transaction is cryptographically secure.
+            - text: Full visibility on what happens on-chain and what stays private.
+        - generic [ref=e339]:
+          - img "thumbnail" [ref=e342]
+          - img "thumbnail" [ref=e345]
+          - img "thumbnail" [ref=e348]
+          - img "thumbnail" [ref=e351]
+        - generic [ref=e353]:
+          - generic [ref=e355]:
+            - generic [ref=e356]: "1"
+            - generic [ref=e357]: User Action
+          - generic [ref=e358]:
+            - generic [ref=e359]: "2"
+            - generic [ref=e360]: Smart Contract
+          - generic [ref=e361]:
+            - generic [ref=e362]: "3"
+            - generic [ref=e363]: Blockchain Consensus
+          - generic [ref=e364]:
+            - generic [ref=e365]: "4"
+            - generic [ref=e366]: Verification
+    - contentinfo [ref=e367]:
+      - generic [ref=e368]:
+        - generic [ref=e369]:
+          - generic [ref=e370]:
+            - link "TicketVerse" [ref=e371] [cursor=pointer]:
+              - /url: /
+              - img [ref=e373]
+              - generic [ref=e375]: TicketVerse
+            - paragraph [ref=e376]: The world's first decentralized ticketing protocol. Secure, transparent, and built for the future of live events.
+            - generic [ref=e377]:
+              - link [ref=e378] [cursor=pointer]:
+                - /url: "#"
+                - img [ref=e379]
+              - link [ref=e381] [cursor=pointer]:
+                - /url: "#"
+                - img [ref=e382]
+              - link [ref=e385] [cursor=pointer]:
+                - /url: "#"
+                - img [ref=e386]
+              - link [ref=e390] [cursor=pointer]:
+                - /url: "#"
+                - img [ref=e391]
+          - generic [ref=e394]:
+            - heading "Platform" [level=4] [ref=e395]
+            - list [ref=e396]:
+              - listitem [ref=e397]:
+                - link "Explore Events" [ref=e398] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e399]:
+                - link "How it Works" [ref=e400] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e401]:
+                - link "Pricing" [ref=e402] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e403]:
+                - link "For Organizers" [ref=e404] [cursor=pointer]:
+                  - /url: "#"
+          - generic [ref=e405]:
+            - heading "Resources" [level=4] [ref=e406]
+            - list [ref=e407]:
+              - listitem [ref=e408]:
+                - link "Documentation" [ref=e409] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e410]:
+                - link "Help Center" [ref=e411] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e412]:
+                - link "Community" [ref=e413] [cursor=pointer]:
+                  - /url: "#"
+              - listitem [ref=e414]:
+                - link "Blog" [ref=e415] [cursor=pointer]:
+                  - /url: "#"
+          - generic [ref=e416]:
+            - heading "Stay Updated" [level=4] [ref=e417]
+            - paragraph [ref=e418]: Subscribe to our newsletter for the latest drops and updates.
+            - generic [ref=e419]:
+              - textbox "Enter your email" [ref=e420]
+              - button "Join" [ref=e421] [cursor=pointer]
+        - generic [ref=e422]:
+          - paragraph [ref=e423]: © 2024 TicketVerse Protocol. All rights reserved.
+          - generic [ref=e424]:
+            - link "Privacy Policy" [ref=e425] [cursor=pointer]:
+              - /url: "#"
+            - link "Terms of Service" [ref=e426] [cursor=pointer]:
+              - /url: "#"
+  - button "Open Next.js Dev Tools" [ref=e432] [cursor=pointer]:
+    - img [ref=e433]
+```

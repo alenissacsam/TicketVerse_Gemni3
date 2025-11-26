@@ -89,7 +89,7 @@ export function ProtocolTransparency() {
     <div className="relative w-full py-32 overflow-hidden bg-black">
       {/* Aurora Background Effect */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-blue-500/20 rounded-full blur-[120px] opacity-30 animate-pulse" />
-      <div className="absolute bottom-0 right-0 w-[800px] h-[600px] bg-purple-500/10 rounded-full blur-[100px] opacity-20" />
+      <div className="absolute bottom-0 right-0 w-[800px] h-[600px] bg-zinc-500/10 rounded-full blur-[100px] opacity-20" />
 
       <div className="container mx-auto px-6 max-w-7xl relative z-10">
         {/* Header */}

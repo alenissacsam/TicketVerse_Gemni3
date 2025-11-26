@@ -15,7 +15,6 @@ export async function POST(request: Request) {
 
     let user;
     try {
-      console.log("Attempting to upsert user:", { email, walletAddress });
       user = await prisma.user.upsert({
         where: { walletAddress },
         update: { email },
@@ -29,7 +28,6 @@ export async function POST(request: Request) {
     } catch (e: any) {
       console.error("Upsert failed, checking error code:", e.code);
       if (e.code === "P2002" && e.meta?.target?.includes("email")) {
-        console.log("Email collision detected. Updating existing user wallet.");
         // Email exists but wallet is different. Update wallet for this email.
         user = await prisma.user.update({
           where: { email },

@@ -1,12 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function POST(
-  request: Request,
-  { params }: { params: { id: string } }
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const { action, adminId } = await request.json();
 
     if (!["approve", "reject"].includes(action)) {
@@ -16,7 +16,7 @@ export async function POST(
       );
     }
 
-    const organizerRequest = await prisma.organizerRequest.findUnique({
+    const organizerRequest = await prisma.verificationRequest.findUnique({
       where: { id },
       include: { user: true },
     });
@@ -29,12 +29,10 @@ export async function POST(
     }
 
     // Update request status
-    const updated = await prisma.organizerRequest.update({
+    const updated = await prisma.verificationRequest.update({
       where: { id },
       data: {
         status: action === "approve" ? "APPROVED" : "REJECTED",
-        reviewedBy: adminId,
-        reviewedAt: new Date(),
       },
     });
 
@@ -42,7 +40,7 @@ export async function POST(
     if (action === "approve") {
       await prisma.user.update({
         where: { id: organizerRequest.userId },
-        data: { isOrganizer: true },
+        data: { role: "ORGANIZER" },
       });
     }
 

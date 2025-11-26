@@ -31,9 +31,9 @@ export const colorSchemes = {
     tertiary: "#FF2B6C",
   },
   default: {
-    primary: "#FF5C7A",
-    secondary: "#8A5CFF",
-    tertiary: "#00FFD1",
+    primary: "#FFFFFF",
+    secondary: "#A1A1AA", // Zinc 400
+    tertiary: "#52525B", // Zinc 600
   },
 };
 

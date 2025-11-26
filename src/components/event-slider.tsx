@@ -1,41 +1,30 @@
-import { prisma } from "@/lib/prisma";
+"use client";
+
+import { useEffect, useState } from "react";
 import { TrendingCarousel } from "./trending-carousel";
+import { getTrendingEvents } from "@/app/actions/get-trending-events";
 
-export async function EventSlider() {
-  try {
-    const events = await prisma.event.findMany({
-      where: { isTrending: true },
-      orderBy: { date: "asc" },
-      include: {
-        ticketTypes: true,
-      },
-    });
+export function EventSlider() {
+  const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-    // Serialize and map to TrendingCarousel expected format
-    const serializedEvents = events.map(event => {
-      // Find the lowest price
-      const lowestPrice = event.ticketTypes.length > 0
-        ? Math.min(...event.ticketTypes.map(t => Number(t.price)))
-        : 0;
-
-      return {
-        id: event.id,
-        title: event.name,
-        date: event.date.toISOString(),
-        location: event.venue,
-        imageUrl: event.coverImageUrl || "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&q=80",
-        price: lowestPrice === 0 ? "Free" : `${lowestPrice} USDC`,
-        isTrending: event.isTrending
-      };
-    });
-
-    if (serializedEvents.length === 0) {
-      return null;
+  useEffect(() => {
+    async function fetchEvents() {
+      try {
+        const data = await getTrendingEvents();
+        setEvents(data);
+      } catch (error) {
+        console.error("Error fetching trending events:", error);
+      } finally {
+        setLoading(false);
+      }
     }
 
-    return <TrendingCarousel events={serializedEvents} />;
-  } catch (error) {
-    console.error("Failed to fetch events:", error);
-    return null;
-  }
+    fetchEvents();
+  }, []);
+
+  if (loading) return null; // Or a loading skeleton
+  if (events.length === 0) return null;
+
+  return <TrendingCarousel events={events} />;
 }

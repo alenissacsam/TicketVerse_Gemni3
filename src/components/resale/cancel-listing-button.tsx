@@ -48,9 +48,10 @@ export function CancelListingButton({
       const hash = await client.sendTransaction({
         to: TICKET_MARKETPLACE_ADDRESS as `0x${string}`,
         data,
+        chain: null,
       });
 
-      console.log("Cancel listing tx:", hash);
+
 
       // Update backend to mark listing as cancelled
       const response = await fetch(`/api/listings/${listingId}`, {

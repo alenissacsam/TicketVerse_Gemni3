@@ -51,6 +51,7 @@ export async function POST(request: Request) {
           create: {
             fromUserId: event.organizerId,
             toUserId: user.id,
+            price: price || 0,
             transactionHash,
           }
         }

@@ -231,9 +231,9 @@ export default function CreateEventPage() {
       });
 
       const txHash = await client.sendTransaction({
-        to: EVENT_FACTORY_ADDRESS,
-        data: data,
-        value: parseEther("0.01"), // Creation fee
+        to: EVENT_FACTORY_ADDRESS as `0x${string}`,
+        data,
+        value: parseEther("0.01"), // Fee
         chain: null,
       });
 
@@ -314,7 +314,7 @@ export default function CreateEventPage() {
             )}
           </AnimatePresence>
 
-          <form onSubmit={handleSubmit} className={`space-y-8 bg-zinc-900/30 backdrop-blur-xl p-8 md:p-10 rounded-3xl border border-white/10 ${showAuthOverlay ? 'opacity-20' : 'opacity-100'}`}>
+          <form onSubmit={handleSubmit} className={`space-y-8 glass-premium p-8 md:p-12 rounded-[2.5rem] ${showAuthOverlay ? 'opacity-20' : 'opacity-100'}`}>
 
             {/* Event Details Section */}
             <div className="space-y-6">

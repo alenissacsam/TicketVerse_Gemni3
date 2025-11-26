@@ -71,7 +71,8 @@ export function GsapIntro({ onComplete }: GsapIntroProps) {
           <span
             key={i}
             ref={addToRefs}
-            className="opacity-0 inline-block text-4xl md:text-7xl font-serif italic font-medium text-white tracking-tight mx-2"
+            className="opacity-0 inline-block text-2xl md:text-4xl font-serif italic font-medium text-white tracking-tight mx-2"
+            style={{ textShadow: "0 0 10px rgba(255,255,255,0.8), 0 0 20px rgba(255,255,255,0.5), 0 0 30px rgba(255,255,255,0.3)" }}
           >
             {word}
           </span>
@@ -82,7 +83,8 @@ export function GsapIntro({ onComplete }: GsapIntroProps) {
           <span
             key={i}
             ref={addToRefs}
-            className="opacity-0 inline-block text-4xl md:text-7xl font-serif italic font-medium text-white tracking-tight mx-2"
+            className="opacity-0 inline-block text-2xl md:text-4xl font-serif italic font-medium text-white tracking-tight mx-2"
+            style={{ textShadow: "0 0 10px rgba(255,255,255,0.8), 0 0 20px rgba(255,255,255,0.5), 0 0 30px rgba(255,255,255,0.3)" }}
           >
             {word}
           </span>

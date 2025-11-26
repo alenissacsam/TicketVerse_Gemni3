@@ -49,7 +49,6 @@ export async function POST(request: Request) {
         },
         data: {
           status,
-          reviewedAt: new Date(),
         },
       });
 
@@ -64,7 +63,7 @@ export async function POST(request: Request) {
           } else if (request.type === "VIP") {
             await tx.user.update({
               where: { id: request.userId },
-              data: { isVerified: true },
+              data: { isVip: true },
             });
           }
         }

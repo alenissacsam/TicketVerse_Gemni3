@@ -1,10 +1,10 @@
 "use client";
 
-import { motion, useMotionValue, useTransform } from "framer-motion";
+import { motion, useMotionValue, useTransform, HTMLMotionProps } from "framer-motion";
 import { ReactNode, useRef } from "react";
 import { cn } from "@/lib/utils";
 
-interface GlassCardProps {
+interface GlassCardProps extends HTMLMotionProps<"div"> {
   children: ReactNode;
   className?: string;
   hover3D?: boolean;
@@ -20,6 +20,7 @@ export const GlassCard = ({
   parallaxStrength = 15,
   glowOnHover = true,
   onClick,
+  ...props
 }: GlassCardProps) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
@@ -48,17 +49,19 @@ export const GlassCard = ({
     mouseY.set(0);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (onClick && (e.key === "Enter" || e.key === " ")) {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
   return (
     <motion.div
       ref={cardRef}
       className={cn(
-        "glass-card relative overflow-hidden rounded-xl backdrop-blur-xl",
-        "bg-gradient-to-br from-white/10 to-white/5",
-        "border border-white/20",
-        "shadow-lg shadow-black/10",
-        "transition-all duration-300",
-        glowOnHover && "hover:shadow-2xl hover:shadow-primary/20 hover:border-white/30",
-        onClick && "cursor-pointer",
+        "glass-premium relative overflow-hidden rounded-2xl",
+        onClick && "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
         className
       )}
       style={{
@@ -69,15 +72,19 @@ export const GlassCard = ({
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
+      onKeyDown={onClick ? handleKeyDown : undefined}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
+      {...props}
     >
       {/* Gradient glow overlay on hover */}
       {glowOnHover && (
         <motion.div
           className="absolute inset-0 opacity-0 transition-opacity duration-300 pointer-events-none"
           style={{
-            background: "radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,255,255,0.1) 0%, transparent 50%)",
+            background: "radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.15) 0%, transparent 70%)",
           }}
           whileHover={{ opacity: 1 }}
         />
@@ -89,8 +96,8 @@ export const GlassCard = ({
       </div>
       
       {/* Subtle border shimmer */}
-      <div className="absolute inset-0 rounded-xl opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-        <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
+      <div className="absolute inset-0 rounded-2xl opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer" />
       </div>
     </motion.div>
   );

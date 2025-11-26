@@ -3,10 +3,10 @@ import { prisma } from "@/lib/prisma";
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     // In a real app, we'd verify the user session here to ensure they own the listing
     
     const listing = await prisma.listing.update({

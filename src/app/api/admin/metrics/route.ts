@@ -44,7 +44,7 @@ export async function GET() {
         // Get active users count (users who have purchased tickets)
         const activeUsers = await prisma.user.count({
             where: {
-                ticketsPurchased: {
+                ticketsOwned: {
                     some: {},
                 },
             },
@@ -63,8 +63,8 @@ export async function GET() {
                         ticketType: true,
                     },
                 },
-                from: true,
-                to: true,
+                fromUser: true,
+                toUser: true,
             },
         });
 
@@ -89,7 +89,9 @@ export async function GET() {
         const topEventsBySales = await prisma.event.findMany({
             take: 5,
             orderBy: {
-                ticketsSold: "desc",
+                tickets: {
+                _count: "desc",
+            },
             },
             include: {
                 organizer: true,

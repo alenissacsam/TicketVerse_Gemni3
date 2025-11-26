@@ -8,6 +8,11 @@ import { Footer } from "@/components/footer";
 import { SmoothScrollProvider } from "@/components/smooth-scroll-provider";
 import { IntroProvider } from "@/components/intro-provider";
 import { GlobalPreloader } from "@/components/global-preloader";
+import { CartProvider } from "@/components/marketplace/cart-provider";
+import { CartSheet } from "@/components/marketplace/cart-sheet";
+import { headers } from "next/headers";
+import { cookieToInitialState } from "@account-kit/core";
+import { config } from "@/lib/config";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,28 +46,37 @@ export const metadata: Metadata = {
   description: "NFT Ticketing Marketplace",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headersList = await headers();
+  const initialState = cookieToInitialState(
+    config,
+    headersList.get("cookie") ?? undefined
+  );
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} ${satisfy.variable} ${bungee.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} ${satisfy.variable} ${bungee.variable} antialiased bg-black min-h-screen selection:bg-purple-500/30`}
         suppressHydrationWarning
       >
-        <Providers>
+        <Providers initialState={initialState}>
           <SmoothScrollProvider>
             <IntroProvider>
-              <GlobalPreloader />
-              <SidebarNav />
-              <div className="min-h-screen flex flex-col">
-                <div className="flex-grow">
-                  {children}
+              <CartProvider>
+                <GlobalPreloader />
+                <SidebarNav />
+                <CartSheet />
+                <div className="min-h-screen flex flex-col">
+                  <div className="flex-grow relative z-10">
+                    {children}
+                  </div>
+                  <Footer />
                 </div>
-                <Footer />
-              </div>
+              </CartProvider>
             </IntroProvider>
           </SmoothScrollProvider>
         </Providers>

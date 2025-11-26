@@ -1,6 +1,6 @@
 import * as React from "react"
-import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
+import { motion, HTMLMotionProps } from "framer-motion"
 
 import { cn } from "@/lib/utils"
 
@@ -18,6 +18,7 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        glow: "bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.4)] hover:shadow-[0_0_30px_rgba(255,255,255,0.7)] border-none",
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -35,18 +36,37 @@ const buttonVariants = cva(
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+  VariantProps<typeof buttonVariants> {
   asChild?: boolean
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button"
+    // Simplified Slot behavior: if asChild is true, we just render the child with the props
+    // But for now, to avoid complexity and dependency, we'll just ignore asChild or treat it as a regular button if possible,
+    // or better, just use motion.button always since we want animations.
+    // If asChild is strictly needed for some components, we might need a better solution, 
+    // but for this project, standard buttons are likely fine.
+    // However, to be safe and keep existing behavior mostly working:
+
+    if (asChild) {
+      const child = React.Children.only(props.children) as React.ReactElement;
+      return React.cloneElement(child, {
+        className: cn(buttonVariants({ variant, size, className }), child.props.className),
+        ref,
+        ...props,
+        ...child.props, // child props take precedence
+      });
+    }
+
     return (
-      <Comp
+      <motion.button
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
-        {...props}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        transition={{ type: "spring", stiffness: 400, damping: 17 }}
+        {...(props as HTMLMotionProps<"button">)}
       />
     )
   },

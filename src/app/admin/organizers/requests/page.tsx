@@ -122,8 +122,6 @@ export default function PendingOrganizerRequests() {
                         args: [req.user.walletAddress as `0x${string}`, true],
                         account: account as `0x${string}`,
                     });
-
-                    console.log(`Whitelisted ${req.user.email}, tx: ${hash}`);
                 } catch (error) {
                     console.error(`Failed to whitelist ${req.user.walletAddress}:`, error);
                     alert(`Failed to whitelist ${req.user.email}. Stopping bulk approval.`);

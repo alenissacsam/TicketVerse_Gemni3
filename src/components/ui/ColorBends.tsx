@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import './ColorBends.css';
@@ -111,11 +113,11 @@ export default function ColorBends({
   parallax = 0.5,
   noise = 0.1
 }) {
-  const containerRef = useRef(null);
-  const rendererRef = useRef(null);
-  const rafRef = useRef(null);
-  const materialRef = useRef(null);
-  const resizeObserverRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const rafRef = useRef<number | null>(null);
+  const materialRef = useRef<THREE.ShaderMaterial | null>(null);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
   const rotationRef = useRef(rotation);
   const autoRotateRef = useRef(autoRotate);
   const pointerTargetRef = useRef(new THREE.Vector2(0, 0));
@@ -177,8 +179,12 @@ export default function ColorBends({
       if (!container) return;
       const w = container.clientWidth || 1;
       const h = container.clientHeight || 1;
-      renderer.setSize(w, h, false);
-      material.uniforms.uCanvas.value.set(w, h);
+      if (renderer) {
+        renderer.setSize(w, h, false);
+      }
+      if (material) {
+        material.uniforms.uCanvas.value.set(w, h);
+      }
     };
 
     handleResize();
@@ -194,20 +200,24 @@ export default function ColorBends({
     const loop = () => {
       const dt = clock.getDelta();
       const elapsed = clock.elapsedTime;
-      material.uniforms.uTime.value = elapsed;
+      if (material) {
+        material.uniforms.uTime.value = elapsed;
 
-      const deg = (rotationRef.current % 360) + autoRotateRef.current * elapsed;
-      const rad = (deg * Math.PI) / 180;
-      const c = Math.cos(rad);
-      const s = Math.sin(rad);
-      material.uniforms.uRot.value.set(c, s);
+        const deg = (rotationRef.current % 360) + autoRotateRef.current * elapsed;
+        const rad = (deg * Math.PI) / 180;
+        const c = Math.cos(rad);
+        const s = Math.sin(rad);
+        material.uniforms.uRot.value.set(c, s);
 
-      const cur = pointerCurrentRef.current;
-      const tgt = pointerTargetRef.current;
-      const amt = Math.min(1, dt * pointerSmoothRef.current);
-      cur.lerp(tgt, amt);
-      material.uniforms.uPointer.value.copy(cur);
-      renderer.render(scene, camera);
+        const cur = pointerCurrentRef.current;
+        const tgt = pointerTargetRef.current;
+        const amt = Math.min(1, dt * pointerSmoothRef.current);
+        cur.lerp(tgt, amt);
+        material.uniforms.uPointer.value.copy(cur);
+      }
+      if (renderer && scene && camera) {
+        renderer.render(scene, camera);
+      }
       rafRef.current = requestAnimationFrame(loop) as any;
     };
     rafRef.current = requestAnimationFrame(loop);
@@ -228,16 +238,23 @@ export default function ColorBends({
   useEffect(() => {
     const material = materialRef.current;
     const renderer = rendererRef.current;
-    if (!material) return;
+    if (!material || !renderer) return;
 
     rotationRef.current = rotation;
     autoRotateRef.current = autoRotate;
+    // @ts-ignore
     material.uniforms.uSpeed.value = speed;
+    // @ts-ignore
     material.uniforms.uScale.value = scale;
+    // @ts-ignore
     material.uniforms.uFrequency.value = frequency;
+    // @ts-ignore
     material.uniforms.uWarpStrength.value = warpStrength;
+    // @ts-ignore
     material.uniforms.uMouseInfluence.value = mouseInfluence;
+    // @ts-ignore
     material.uniforms.uParallax.value = parallax;
+    // @ts-ignore
     material.uniforms.uNoise.value = noise;
 
     const toVec3 = (hex: string) => {
@@ -251,12 +268,15 @@ export default function ColorBends({
 
     const arr = (colors || []).filter(Boolean).slice(0, MAX_COLORS).map(toVec3);
     for (let i = 0; i < MAX_COLORS; i++) {
+      // @ts-ignore
       const vec = material.uniforms.uColors.value[i];
       if (i < arr.length) vec.copy(arr[i]);
       else vec.set(0, 0, 0);
     }
+    // @ts-ignore
     material.uniforms.uColorCount.value = arr.length;
 
+    // @ts-ignore
     material.uniforms.uTransparent.value = transparent ? 1 : 0;
     if (renderer) renderer.setClearColor(0x000000, transparent ? 0 : 1);
   }, [
@@ -274,9 +294,8 @@ export default function ColorBends({
   ]);
 
   useEffect(() => {
-    const material = materialRef.current;
     const container = containerRef.current;
-    if (!material || !container) return;
+    if (!container) return;
 
     const handlePointerMove = (e: PointerEvent) => {
       if (!container) return;

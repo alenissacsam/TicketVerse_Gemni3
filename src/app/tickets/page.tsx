@@ -7,13 +7,14 @@ import { sepolia } from "viem/chains";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Wallet, Shield, Ticket, UserCheck } from "lucide-react";
+import { Loader2, Wallet, Shield, Ticket, UserCheck, ArrowRight } from "lucide-react";
 import { USDC_ADDRESS } from "@/lib/config";
 import { SellTicketModal } from "@/components/resale/sell-ticket-modal";
+import { TransferTicketModal } from "@/components/resale/transfer-ticket-modal";
 import { CancelListingButton } from "@/components/resale/cancel-listing-button";
-
-// VIP NFT Contract (Placeholder - replace with actual if known, or use config)
-const VIP_NFT_ADDRESS = "0x0000000000000000000000000000000000000000"; // TODO: Update
+import { CometCard } from "@/components/ui/comet-card";
+import { motion } from "framer-motion";
+import Link from "next/link";
 
 export default function UserDashboard() {
     const user = useUser();
@@ -53,10 +54,8 @@ export default function UserDashboard() {
             });
             setUsdcBalance((Number(usdcData) / 1000000).toFixed(2)); // USDC has 6 decimals
 
-            // 3. Fetch VIP Status (Mock for now if address unknown)
-            // const vipData = await client.readContract({ ... });
-            // setIsVip(Number(vipData) > 0);
-            setIsVip(false); // Default to false for now
+            // 3. Fetch VIP Status (Mock for now)
+            setIsVip(false);
 
             // 4. Fetch Verification Status from DB
             const res = await fetch(`/api/user/me?walletAddress=${address}`);
@@ -102,176 +101,196 @@ export default function UserDashboard() {
     if (!user) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-black text-white">
-                <div className="text-center">
-                    <h1 className="text-2xl font-bold mb-4">Please Connect Wallet</h1>
-                    <p className="text-zinc-400">Connect your wallet to view your dashboard.</p>
+                <div className="text-center space-y-4">
+                    <h1 className="text-4xl font-bungee mb-4">Connect Wallet</h1>
+                    <p className="text-zinc-400 max-w-md mx-auto">Connect your smart wallet to view your tickets and manage your account.</p>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-black text-white pt-24 px-6 pb-12">
-            <div className="max-w-6xl mx-auto space-y-8">
+        <div className="min-h-screen bg-black text-white pt-32 px-6 pb-24">
+            <div className="max-w-7xl mx-auto space-y-12">
 
                 {/* Header */}
-                <div>
-                    <h1 className="text-4xl font-bold mb-2">User Dashboard</h1>
-                    <p className="text-zinc-400">Manage your account, tickets, and status.</p>
+                <div className="flex flex-col md:flex-row justify-between items-end gap-6">
+                    <div>
+                        <h1 className="text-5xl md:text-6xl font-bungee mb-4 text-white">Dashboard</h1>
+                        <p className="text-zinc-400 text-lg">Manage your digital assets and identity.</p>
+                    </div>
+                    <div className="flex items-center gap-3 bg-zinc-900/50 p-2 rounded-full border border-white/10">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center font-bold">
+                            {user.address.slice(2, 4).toUpperCase()}
+                        </div>
+                        <div className="pr-4">
+                            <div className="text-xs text-zinc-500 uppercase font-bold">Connected as</div>
+                            <div className="font-mono text-sm">{user.address.slice(0, 6)}...{user.address.slice(-4)}</div>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
                     {/* Wallet Balance */}
-                    <Card className="bg-zinc-900 border-zinc-800">
-                        <CardHeader className="flex flex-row items-center justify-between pb-2">
-                            <CardTitle className="text-lg font-medium text-zinc-200">Wallet Balance</CardTitle>
+                    <div className="p-8 rounded-3xl glass-premium">
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="text-zinc-400 font-medium text-sm uppercase tracking-wider">Balance</div>
                             <Wallet className="h-5 w-5 text-purple-500" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold text-white">{ethBalance.slice(0, 6)} ETH</div>
-                            <p className="text-xs text-zinc-500 mt-1">{usdcBalance} USDC</p>
-                            <p className="text-xs text-zinc-600 mt-2 truncate">{user.address}</p>
-                        </CardContent>
-                    </Card>
+                        </div>
+                        <div className="text-4xl font-bold text-white mb-2">{ethBalance.slice(0, 6)} ETH</div>
+                        <div className="text-sm text-zinc-500 font-mono">{usdcBalance} USDC</div>
+                    </div>
 
                     {/* VIP Status */}
-                    <Card className="bg-zinc-900 border-zinc-800">
-                        <CardHeader className="flex flex-row items-center justify-between pb-2">
-                            <CardTitle className="text-lg font-medium text-zinc-200">VIP Status</CardTitle>
+                    <div className="p-8 rounded-3xl glass-premium">
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="text-zinc-400 font-medium text-sm uppercase tracking-wider">Status</div>
                             <Shield className={`h-5 w-5 ${isVip ? "text-yellow-500" : "text-zinc-600"}`} />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="flex items-center gap-2 mb-3">
-                                <div className={`text-2xl font-bold ${isVip ? "text-yellow-400" : "text-zinc-500"}`}>
-                                    {isVip ? "VIP Member" : "Standard"}
-                                </div>
-                                {isVip && <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/50">Active</Badge>}
+                        </div>
+                        <div className="flex items-center gap-3 mb-3">
+                            <div className={`text-3xl font-bold ${isVip ? "text-yellow-400" : "text-white"}`}>
+                                {isVip ? "VIP Member" : "Standard"}
                             </div>
+                            {isVip && <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/50">Active</Badge>}
+                        </div>
+                        {!isVip && (
+                            <button
+                                onClick={() => handleRequestVerification("VIP")}
+                                disabled={requesting}
+                                className="text-xs text-yellow-500 hover:text-yellow-400 underline decoration-yellow-500/30 underline-offset-4 transition-colors"
+                            >
+                                Request VIP Upgrade
+                            </button>
+                        )}
+                    </div>
 
-                            {!isVip && (
-                                <Button
-                                    onClick={() => handleRequestVerification("VIP")}
-                                    disabled={requesting}
-                                    variant="outline"
-                                    className="w-full border-yellow-500/20 text-yellow-500 hover:bg-yellow-500/10 h-8 text-sm mb-2"
-                                >
-                                    {requesting ? <Loader2 className="h-3 w-3 animate-spin mr-2" /> : null}
-                                    Request VIP Status
-                                </Button>
-                            )}
-
-                            <p className="text-xs text-zinc-500">
-                                {isVip ? "You have access to exclusive events." : "Unlock exclusive perks and early access."}
-                            </p>
-                        </CardContent>
-                    </Card>
-
-                    {/* Verification Status */}
-                    <Card className="bg-zinc-900 border-zinc-800">
-                        <CardHeader className="flex flex-row items-center justify-between pb-2">
-                            <CardTitle className="text-lg font-medium text-zinc-200">Organizer Status</CardTitle>
+                    {/* Organizer Status */}
+                    <div className="p-8 rounded-3xl glass-premium">
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="text-zinc-400 font-medium text-sm uppercase tracking-wider">Role</div>
                             <UserCheck className="h-5 w-5 text-blue-500" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-2">
-                                    <span className={`text-xl font-bold ${verificationStatus === "VERIFIED" ? "text-green-400" :
-                                        verificationStatus === "PENDING" ? "text-yellow-400" : "text-zinc-400"
-                                        }`}>
-                                        {verificationStatus === "NONE" ? "Not Verified" :
-                                            verificationStatus.charAt(0) + verificationStatus.slice(1).toLowerCase()}
-                                    </span>
-                                </div>
-
-                                {verificationStatus === "NONE" && (
-                                    <Button
-                                        onClick={() => handleRequestVerification("ORGANIZER")}
-                                        disabled={requesting}
-                                        className="w-full bg-blue-600 hover:bg-blue-700 text-white h-8 text-sm"
-                                    >
-                                        {requesting ? <Loader2 className="h-3 w-3 animate-spin mr-2" /> : null}
-                                        Request Organizer Access
-                                    </Button>
-                                )}
-
-                                {verificationStatus === "PENDING" && (
-                                    <p className="text-xs text-yellow-500/80 bg-yellow-500/10 p-2 rounded border border-yellow-500/20">
-                                        Your request is under review by admins.
-                                    </p>
-                                )}
-                                {verificationStatus === "VERIFIED" && (
-                                    <p className="text-xs text-green-500/80 bg-green-500/10 p-2 rounded border border-green-500/20">
-                                        You can now create and manage events.
-                                    </p>
-                                )}
-                            </div>
-                        </CardContent>
-                    </Card>
+                        </div>
+                        <div className="text-3xl font-bold text-white mb-3">
+                            {verificationStatus === "NONE" ? "User" :
+                                verificationStatus.charAt(0) + verificationStatus.slice(1).toLowerCase()}
+                        </div>
+                        {verificationStatus === "NONE" && (
+                            <button
+                                onClick={() => handleRequestVerification("ORGANIZER")}
+                                disabled={requesting}
+                                className="text-xs text-blue-500 hover:text-blue-400 underline decoration-blue-500/30 underline-offset-4 transition-colors"
+                            >
+                                Become an Organizer
+                            </button>
+                        )}
+                    </div>
                 </div>
 
                 {/* My Tickets Section */}
                 <div>
-                    <div className="flex items-center gap-3 mb-6">
-                        <Ticket className="h-6 w-6 text-purple-500" />
-                        <h2 className="text-2xl font-bold">My Tickets</h2>
+                    <div className="flex items-center gap-3 mb-8">
+                        <Ticket className="h-6 w-6 text-white" />
+                        <h2 className="text-3xl font-bungee text-white">My Tickets</h2>
                     </div>
 
                     {tickets.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {tickets.map((ticket) => (
-                                <Card key={ticket.id} className="bg-zinc-900 border-zinc-800 overflow-hidden">
-                                    <div className="h-32 bg-zinc-800 relative">
-                                        {/* Use event image if available */}
-                                        {ticket.event?.coverImageUrl && (
-                                            <img
-                                                src={ticket.event.coverImageUrl}
-                                                alt={ticket.event.name}
-                                                className="w-full h-full object-cover opacity-50"
-                                            />
-                                        )}
-                                    </div>
-                                    <CardHeader>
-                                        <CardTitle className="text-white">{ticket.event?.name || "Event Ticket"}</CardTitle>
-                                        <CardDescription>{ticket.ticketType?.name || "General Admission"}</CardDescription>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <div className="flex justify-between text-sm text-zinc-400 mb-4">
-                                            <span>Date: {new Date(ticket.event?.date).toLocaleDateString()}</span>
-                                            {ticket.listing?.status === 'ACTIVE' && (
-                                                <Badge variant="secondary" className="bg-blue-500/20 text-blue-400">Listed</Badge>
-                                            )}
-                                        </div>
-                                        {ticket.listing?.status === 'ACTIVE' ? (
-                                            <div className="space-y-2">
-                                                <Button variant="outline" className="w-full border-zinc-700 text-zinc-300" disabled>
-                                                    Listed for {Number(ticket.listing.price)} USDC
-                                                </Button>
-                                                <CancelListingButton
-                                                    listingId={ticket.listing.id}
-                                                    ticketId={ticket.id}
-                                                    contractAddress={ticket.event.contractAddress}
-                                                    price={ticket.listing.price}
-                                                    deadline={ticket.listing.deadline}
-                                                    onSuccess={() => fetchUserData(user.address!)}
-                                                />
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {tickets.map((ticket, i) => (
+                                <motion.div
+                                    key={ticket.id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: i * 0.1 }}
+                                >
+                                    <CometCard className="h-full aspect-[3/4]">
+                                        <div className="relative h-full w-full bg-zinc-900 rounded-[2rem] overflow-hidden border border-white/10 flex flex-col">
+                                            {/* Image */}
+                                            <div className="h-1/2 relative overflow-hidden">
+                                                {ticket.event?.coverImageUrl && (
+                                                    <img
+                                                        src={ticket.event.coverImageUrl}
+                                                        alt={ticket.event.name}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                )}
+                                                <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 to-transparent" />
+                                                <div className="absolute top-4 right-4">
+                                                    <Badge className="bg-black/50 backdrop-blur text-white border-white/20">
+                                                        #{ticket.tokenId}
+                                                    </Badge>
+                                                </div>
                                             </div>
-                                        ) : (
-                                            <SellTicketModal 
-                                                ticketId={ticket.id} 
-                                                tokenId={ticket.tokenId} 
-                                                onSuccess={() => fetchUserData(user.address!)}
-                                            />
-                                        )}
-                                    </CardContent>
-                                </Card>
+
+                                            {/* Content */}
+                                            <div className="p-6 flex-1 flex flex-col justify-between">
+                                                <div>
+                                                    <h3 className="text-xl font-bold text-white mb-1 line-clamp-1">{ticket.event?.name}</h3>
+                                                    <p className="text-zinc-400 text-sm mb-4">{ticket.ticketType?.name}</p>
+
+                                                    <div className="space-y-2 text-sm text-zinc-500">
+                                                        <div className="flex justify-between">
+                                                            <span>Date</span>
+                                                            <span className="text-zinc-300">{new Date(ticket.event?.date).toLocaleDateString()}</span>
+                                                        </div>
+                                                        <div className="flex justify-between">
+                                                            <span>Venue</span>
+                                                            <span className="text-zinc-300 truncate max-w-[150px]">{ticket.event?.venue}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="mt-6 pt-6 border-t border-white/5">
+                                                    {ticket.listing?.status === 'ACTIVE' ? (
+                                                        <div className="space-y-3">
+                                                            <div className="flex items-center justify-between text-sm">
+                                                                <span className="text-blue-400">Listed for Sale</span>
+                                                                <span className="font-bold text-white">{Number(ticket.listing.price)} USDC</span>
+                                                            </div>
+                                                            <CancelListingButton
+                                                                listingId={ticket.listing.id}
+                                                                ticketId={ticket.id}
+                                                                contractAddress={ticket.event.contractAddress}
+                                                                price={ticket.listing.price}
+                                                                deadline={ticket.listing.deadline}
+                                                                onSuccess={() => fetchUserData(user.address!)}
+                                                            />
+                                                        </div>
+                                                    ) : (
+                                                        <div className="grid grid-cols-2 gap-3">
+                                                            <SellTicketModal
+                                                                ticketId={ticket.id}
+                                                                tokenId={ticket.tokenId}
+                                                                onSuccess={() => fetchUserData(user.address!)}
+                                                            />
+                                                            <TransferTicketModal
+                                                                ticketId={ticket.id}
+                                                                tokenId={ticket.tokenId}
+                                                                onSuccess={() => fetchUserData(user.address!)}
+                                                            />
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </CometCard>
+                                </motion.div>
                             ))}
                         </div>
                     ) : (
-                        <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-12 text-center">
-                            <p className="text-zinc-500">You haven't purchased any tickets yet.</p>
-                            <Button variant="link" className="text-purple-400 mt-2">Browse Events</Button>
+                        <div className="bg-zinc-900/30 border border-white/10 rounded-3xl p-16 text-center backdrop-blur-sm">
+                            <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <Ticket className="w-8 h-8 text-zinc-500" />
+                            </div>
+                            <h3 className="text-xl font-bold text-white mb-2">No tickets yet</h3>
+                            <p className="text-zinc-500 mb-8 max-w-sm mx-auto">
+                                You haven't purchased any tickets. Explore upcoming events to get started.
+                            </p>
+                            <Link href="/events">
+                                <Button className="bg-white text-black hover:bg-zinc-200 rounded-full px-8 py-6 font-bold text-lg">
+                                    Explore Events <ArrowRight className="ml-2 w-5 h-5" />
+                                </Button>
+                            </Link>
                         </div>
                     )}
                 </div>

@@ -1,14 +1,16 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import ColorBends from "@/components/ui/ColorBends";
-import { GsapIntro } from "@/components/ui/gsap-intro";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import { LiquidButton } from "@/components/ui/liquid-button";
+import { useIntro } from "@/components/intro-provider";
 
 export const LandingHero = () => {
-  const [introComplete, setIntroComplete] = useState(false);
+  const { introComplete } = useIntro();
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -29,20 +31,8 @@ export const LandingHero = () => {
         />
       </div>
 
-      <AnimatePresence mode="wait">
-        {!introComplete ? (
-          <motion.div
-            key="intro"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
-            className="absolute inset-0 z-50 flex items-center justify-center"
-          >
-            <GsapIntro onComplete={() => setIntroComplete(true)} />
-          </motion.div>
-        ) : (
-          /* Content */
+      <AnimatePresence>
+        {introComplete && (
           <motion.div
             key="content"
             initial={{ opacity: 0 }}

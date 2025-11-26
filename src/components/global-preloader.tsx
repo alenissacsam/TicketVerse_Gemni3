@@ -1,11 +1,24 @@
 "use client";
 
+import { useEffect } from "react";
+
 import { useIntro } from "@/components/intro-provider";
 import { GsapIntro } from "@/components/ui/gsap-intro";
 import { AnimatePresence, motion } from "framer-motion";
 
 export function GlobalPreloader() {
   const { introComplete, setIntroComplete } = useIntro();
+
+  // Safety timeout to ensure app is accessible even if GSAP hangs
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!introComplete) {
+        console.warn("GlobalPreloader: Safety timeout triggered");
+        setIntroComplete(true);
+      }
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [introComplete, setIntroComplete]);
 
   return (
     <AnimatePresence mode="wait">
