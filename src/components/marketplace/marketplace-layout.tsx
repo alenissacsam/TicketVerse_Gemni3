@@ -1,11 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Filter, ChevronLeft, ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Filter } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface MarketplaceLayoutProps {
     children: React.ReactNode;
@@ -13,41 +12,16 @@ interface MarketplaceLayoutProps {
 }
 
 export function MarketplaceLayout({ children, sidebar }: MarketplaceLayoutProps) {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
     return (
-        <div className="flex min-h-screen bg-black text-white pt-20">
-            {/* Desktop Sidebar */}
-            <aside
-                className={cn(
-                    "hidden lg:block sticky top-20 h-[calc(100vh-5rem)] border-r border-zinc-800 transition-all duration-300 ease-in-out bg-black/50 backdrop-blur-xl z-30",
-                    isSidebarOpen ? "w-80" : "w-0 border-none"
-                )}
-            >
-                <div className={cn("h-full overflow-hidden", !isSidebarOpen && "hidden")}>
-                    <ScrollArea className="h-full px-4 py-6">
-                        {sidebar}
-                    </ScrollArea>
-                </div>
-            </aside>
-
+        <div className="min-h-screen bg-gradient-to-br from-zinc-900 to-black text-white pt-24 pl-28">
             {/* Main Content */}
-            <main className="flex-1 min-w-0">
-                <div className="p-6 space-y-6">
-                    {/* Mobile Filter Trigger & Desktop Toggle */}
-                    <div className="flex items-center gap-4 mb-6">
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="hidden lg:flex hover:bg-zinc-800"
-                            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                        >
-                            {isSidebarOpen ? <ChevronLeft /> : <ChevronRight />}
-                        </Button>
-
+            <main className="w-full">
+                <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                    {/* Mobile Filter Trigger */}
+                    <div className="lg:hidden mb-6">
                         <Sheet>
                             <SheetTrigger asChild>
-                                <Button variant="outline" className="lg:hidden gap-2">
+                                <Button variant="outline" className="gap-2 bg-zinc-900/50 border-white/10 hover:bg-zinc-800/50">
                                     <Filter size={16} />
                                     Filters
                                 </Button>
