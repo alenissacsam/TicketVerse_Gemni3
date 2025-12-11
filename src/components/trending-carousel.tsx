@@ -66,7 +66,7 @@ export function TrendingCarousel({ events }: TrendingCarouselProps) {
   useEffect(() => {
     if (!headerRef.current) return;
 
-    const chars = headerRef.current.querySelectorAll(".hot-ticket-char");
+    const chars = headerRef.current.querySelectorAll(".trending-ticket-char");
 
     const ctx = gsap.context(() => {
       gsap.fromTo(chars,
@@ -150,13 +150,13 @@ export function TrendingCarousel({ events }: TrendingCarouselProps) {
             </div>
             <h2 className="text-5xl md:text-7xl font-bungee text-white tracking-tight overflow-hidden">
               <span className="inline-block mr-4">
-                {"Hot".split("").map((char, i) => (
-                  <span key={i} className="inline-block hot-ticket-char origin-bottom">{char}</span>
+                {"Trending".split("").map((char, i) => (
+                  <span key={i} className="inline-block trending-ticket-char origin-bottom">{char}</span>
                 ))}
               </span>
               <span className="inline-block text-zinc-600">
-                {"Tickets".split("").map((char, i) => (
-                  <span key={i} className="inline-block hot-ticket-char origin-bottom">{char}</span>
+                {"Ticket".split("").map((char, i) => (
+                  <span key={i} className="inline-block trending-ticket-char origin-bottom">{char}</span>
                 ))}
               </span>
             </h2>
